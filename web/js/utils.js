@@ -1,29 +1,41 @@
 const app = document.getElementById("function")
 let data = []
+
 let estatPartida = {
-        resp: [],
-        preguntaActu: 0
+    contadorPreguntas: 0,
+    preguntes: [
+        {id:0, feta:false , resposta: -1}
+    ]  
 }
 
 async function getData() {
-        // const request = await fetch("http://localhost/Act2-JaenBrian/data.json")
-        const request = await fetch("http://localhost/Projecte0/Projecte0/back/data.json")
+        const cantPreg = 10
+        const request = await fetch(`../back/getPreguntes.php?cantPreg=${cantPreg}`)
         const json = await request.json()
         return json
 }
 
 async function inicializarApp() {
         data = await getData()
-
-        for (const [index, pregunta] of data.preguntes.entries()) {/*<- .entries() debe contener indice valor*/
-                let tituloPregunta = pregunta.pregunta
-                app.innerHTML += tituloPregunta + '<br><br>'
-                for (const respuesta of pregunta.respostes) {
-                        let resp = respuesta.etiqueta
-                        app.innerHTML += `<button onclick="detectarBoton(${index}, ${respuesta.id})">${resp}</button> <br>`
-                }
-                app.innerHTML += '<br>'
+        console.log(data)
+        for (const pregunta of data) {
+            console.log(pregunta.pregunta);
+            let tituloPregunta = pregunta.pregunta;
+            app.innerHTML += tituloPregunta + `<br><br>`;
+            for (const respuesta of pregunta.respostes) {
+                console.log(respuesta.etiqueta);
+            }
         }
+        
+        // for (const [index, pregunta] of data.pregunta.entries()) {/*<- .entries() debe contener indice valor*/
+        //         let tituloPregunta = pregunta.pregunta
+        //         app.innerHTML += tituloPregunta + '<br><br>'
+        //         for (const respuesta of pregunta.respostes) {
+        //                 let resp = respuesta.etiqueta
+        //                 app.innerHTML += `<button onclick="detectarBoton(${index}, ${respuesta.id})">${resp}</button> <br>`
+        //         }
+        //         app.innerHTML += '<br>'
+        // }
 }
 
 function detectarBoton(indexPregunta, respuestaID) {
@@ -41,25 +53,25 @@ function detectarBoton(indexPregunta, respuestaID) {
         */
 }
 
-function estat(preg, respuesta, pregCorrecta) {
-        let repite = true
+// function estat(preg, respuesta, pregCorrecta) {
+//         let repite = true
 
-        for (let ite = 0; ite < estatPartida.resp.length; ite++) {
-                if (estatPartida.resp[ite].pregunta == preg) {
-                        estatPartida.resp[ite].respuesta == respuesta
-                        repite = false;
-                }
-        }
-        console.log(repite)
-        if (repite) {
-                estatPartida.preguntaActu++; // <- esto se puede quitar por que es redundante y con un length se puede saber
-                estatPartida.resp.push({
-                        pregunta: preg,
-                        respuesta: respuesta,
-                        correcta: pregCorrecta, //<- esto habria que quiarlo por que es de back
-                })
-        }
-        console.log(estatPartida)
-}
+//         for (let ite = 0; ite < estatPartida.resp.length; ite++) {
+//                 if (estatPartida.resp[ite].pregunta == preg) {
+//                         estatPartida.resp[ite].respuesta == respuesta
+//                         repite = false;
+//                 }
+//         }
+//         console.log(repite)
+//         if (repite) {
+//                 estatPartida.preguntaActu++; // <- esto se puede quitar por que es redundante y con un length se puede saber
+//                 estatPartida.resp.push({
+//                         pregunta: preg,
+//                         respuesta: respuesta,
+//                         correcta: pregCorrecta, //<- esto habria que quiarlo por que es de back
+//                 })
+//         }
+//         console.log(estatPartida)
+// }
 
 inicializarApp()
