@@ -1,11 +1,18 @@
-const app = document.getElementById("function")
+const app = document.getElementById("app")
 let data = []
-
 let estatPartida = {
-    contadorPreguntas: 0,
-    preguntes: [
-        {id:0, feta:false , resposta: -1}
-    ]  
+        preguntes: [
+                { idPreg: 0, feta: false, resposta: -1 },
+                { idPreg: 1, feta: false, resposta: -1 },
+                { idPreg: 2, feta: false, resposta: -1 },
+                { idPreg: 3, feta: false, resposta: -1 },
+                { idPreg: 4, feta: false, resposta: -1 },
+                { idPreg: 5, feta: false, resposta: -1 },
+                { idPreg: 6, feta: false, resposta: -1 },
+                { idPreg: 7, feta: false, resposta: -1 },
+                { idPreg: 8, feta: false, resposta: -1 },
+                { idPreg: 9, feta: false, resposta: -1 }
+        ]
 }
 
 async function getData() {
@@ -17,61 +24,50 @@ async function getData() {
 
 async function inicializarApp() {
         data = await getData()
-        console.log(data)
-        for (const pregunta of data) {
-            console.log(pregunta.pregunta);
-            let tituloPregunta = pregunta.pregunta;
-            app.innerHTML += tituloPregunta + `<br><br>`;
-            for (const respuesta of pregunta.respostes) {
-                console.log(respuesta.etiqueta);
-            }
+        pintarTablaPreguntas()
+        for (const [index, pregunta] of data.entries()) {
+                let tituloPregunta = pregunta.pregunta
+                app.innerHTML += tituloPregunta + '<br><br>'
+                for (const respuesta of pregunta.respostes) {
+                        let resp = respuesta.etiqueta
+                        app.innerHTML += `<button onclick="guardarRespuesta(${index}, ${respuesta.id})">${resp}</button> <br>`
+                }
+                app.innerHTML += '<br>'
         }
+}
+
+function guardarRespuesta(indexPregunta, idResposta) {
+        const pregunta = data[indexPregunta]
+        const esCorrecta = pregunta.resposta_correcta == idResposta
+
+        let posId = -1
+        for (let iter = 0; iter < estatPartida.preguntes.length; iter++) {
+                if (indexPregunta == estatPartida.preguntes[iter].idPreg) {
+                        posId = iter
+                        estatPartida.preguntes[posId].resposta = idResposta
+                        estatPartida.preguntes[posId].feta = true
+
+                        console.log(`!!!!!Index pregunta: ${indexPregunta} - Iterador: ${iter}`)
+                        console.log(`Pregunta a cambiar: ${estatPartida.preguntes[indexPregunta].idPreg}`) // <- como hacerlo para cambiar solo la id de esa pregunta
+                }
+        }
+        pintarTablaPreguntas() 
         
-        // for (const [index, pregunta] of data.pregunta.entries()) {/*<- .entries() debe contener indice valor*/
-        //         let tituloPregunta = pregunta.pregunta
-        //         app.innerHTML += tituloPregunta + '<br><br>'
-        //         for (const respuesta of pregunta.respostes) {
-        //                 let resp = respuesta.etiqueta
-        //                 app.innerHTML += `<button onclick="detectarBoton(${index}, ${respuesta.id})">${resp}</button> <br>`
-        //         }
-        //         app.innerHTML += '<br>'
-        // }
+        // console.log(`Id de la pregunta del objeto: ${estatPartida.preguntes[posId].idPreg} - Indice pregunta: ${indexPregunta}`)
+        // console.log(`Saber si esta echa: ${estatPartida.preguntes[posId].feta}`)
+        // console.log(`Saber la respuesta: ${estatPartida.preguntes[posId].resposta}`)
 }
 
-function detectarBoton(indexPregunta, respuestaID) {
-        const pregunta = data.preguntes[indexPregunta]
-        const esCorrecta = pregunta.resposta_correcta == respuestaID
 
-        estat(pregunta.pregunta, respuestaID, esCorrecta)
+function pintarTablaPreguntas() {
+        const tabla = document.getElementById("tablaPreg")
 
-        /*if (esCorrecta) {
-                alert("¡Respuesta correcta!")
-        } else {
-                alert("Respuesta incorrecta. Inténtalo de nuevo.")
+        tabla.innerHTML = ` `
+        tabla.innerHTML += `<table>`
+        for (let iter = 0; iter < estatPartida.preguntes.length; iter++) {
+                tabla.innerHTML += `<tr><td>Pregunta: ${iter + 1} - Fet: ${estatPartida.preguntes[iter].feta} - Resposta: ${estatPartida.preguntes[iter].resposta}</td></tr><br>`
         }
-        console.log(`Pregunta: ${pregunta.pregunta}, Respuesta ID: ${respuestaID}, ¿Es correcta?: ${esCorrecta}`)
-        */
+        tabla.innerHTML += `</table> <br>`
 }
-
-// function estat(preg, respuesta, pregCorrecta) {
-//         let repite = true
-
-//         for (let ite = 0; ite < estatPartida.resp.length; ite++) {
-//                 if (estatPartida.resp[ite].pregunta == preg) {
-//                         estatPartida.resp[ite].respuesta == respuesta
-//                         repite = false;
-//                 }
-//         }
-//         console.log(repite)
-//         if (repite) {
-//                 estatPartida.preguntaActu++; // <- esto se puede quitar por que es redundante y con un length se puede saber
-//                 estatPartida.resp.push({
-//                         pregunta: preg,
-//                         respuesta: respuesta,
-//                         correcta: pregCorrecta, //<- esto habria que quiarlo por que es de back
-//                 })
-//         }
-//         console.log(estatPartida)
-// }
 
 inicializarApp()
