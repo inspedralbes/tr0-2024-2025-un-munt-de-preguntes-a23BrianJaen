@@ -1,0 +1,484 @@
+{
+    "preguntes": [
+        {
+            "id": 1,
+            "pregunta": "Quina marca de cotxes utilitza el lema 'Ultimate Driving Machine'?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Lexus"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "BMW"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Mercedes-Benz"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Audi"
+                }
+            ],
+            "resposta_correcta": 2,
+            "imatge": "https://exemple.com/bmw.jpg"
+        },
+        {
+            "id": 2,
+            "pregunta": "Quina marca de refresc utilitza el lema 'Destapa la Felicitat'?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Sprite"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Pepsi"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Coca-Cola"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Fanta"
+                }
+            ],
+            "resposta_correcta": 3,
+            "imatge": "https://exemple.com/coca-cola.jpg"
+        },
+        {
+            "id": 3,
+            "pregunta": "Quina marca de tecnologia té com a eslògan 'Think Different'?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Apple"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Microsoft"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Samsung"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Google"
+                }
+            ],
+            "resposta_correcta": 1,
+            "imatge": "https://exemple.com/apple.jpg"
+        },
+        {
+            "id": 4,
+            "pregunta": "Quina marca de roba és coneguda pel seu logotip amb un cocodril?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Ralph Lauren"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Lacoste"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Levi's"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Tommy Hilfiger"
+                }
+            ],
+            "resposta_correcta": 2,
+            "imatge": "https://exemple.com/lacoste.jpg"
+        },
+        {
+            "id": 5,
+            "pregunta": "Quina marca de calçat té com a eslògan 'Just Do It'?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Adidas"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Nike"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Puma"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Reebok"
+                }
+            ],
+            "resposta_correcta": 2,
+            "imatge": "https://exemple.com/nike.jpg"
+        },
+        {
+            "id": 6,
+            "pregunta": "Quina marca d'automòbils és famosa pel seu logotip amb un cavall en el centre?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Ferrari"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Porsche"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Lamborghini"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Maserati"
+                }
+            ],
+            "resposta_correcta": 1,
+            "imatge": "https://exemple.com/ferrari.jpg"
+        },
+        {
+            "id": 7,
+            "pregunta": "Quina marca de mòbils utilitza el sistema operatiu Android però té el seu propi ecosistema EMUI?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Huawei"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Samsung"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Xiaomi"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Google"
+                }
+            ],
+            "resposta_correcta": 1,
+            "imatge": "https://exemple.com/huawei.jpg"
+        },
+        {
+            "id": 8,
+            "pregunta": "Quina marca de cafè instantani utilitza el lema 'Despierta a la vida'?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Nescafé"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Tassimo"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Lavazza"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Illy"
+                }
+            ],
+            "resposta_correcta": 1,
+            "imatge": "https://exemple.com/nescafe.jpg"
+        },
+        {
+            "id": 9,
+            "pregunta": "Quina marca de refresc és coneguda pel seu logotip amb una ona blava i vermella?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Pepsi"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Coca-Cola"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Dr Pepper"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "7Up"
+                }
+            ],
+            "resposta_correcta": 1,
+            "imatge": "https://exemple.com/pepsi.jpg"
+        },
+        {
+            "id": 10,
+            "pregunta": "Quina marca de cervesa té un logotip en forma d'estrella vermella?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Heineken"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Budweiser"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Corona"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Estrella Damm"
+                }
+            ],
+            "resposta_correcta": 1,
+            "imatge": "https://exemple.com/heineken.jpg"
+        },
+        {
+            "id": 11,
+            "pregunta": "Quina marca de rellotges suïssos és coneguda pel seu logotip en forma de corona?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Swatch"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Tag Heuer"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Omega"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Rolex"
+                }
+            ],
+            "resposta_correcta": 4,
+            "imatge": "https://exemple.com/rolex.jpg"
+        },
+        {
+            "id": 12,
+            "pregunta": "Quina marca de menjar ràpid utilitza com a símbol uns arcs daurats?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "KFC"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Burger King"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "McDonald's"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Subway"
+                }
+            ],
+            "resposta_correcta": 3,
+            "imatge": "https://exemple.com/mcdonalds.jpg"
+        },
+        {
+            "id": 13,
+            "pregunta": "Quina marca de productes de neteja utilitza el lema 'Dura hasta el final'?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Scotch-Brite"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Vileda"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Ajax"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Mr. Proper"
+                }
+            ],
+            "resposta_correcta": 1,
+            "imatge": "https://exemple.com/scotch-brite.jpg"
+        },
+        {
+            "id": 14,
+            "pregunta": "Quina marca de xocolata té un logotip amb una vaca morada?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Milka"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Lindt"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Toblerone"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Nestlé"
+                }
+            ],
+            "resposta_correcta": 1,
+            "imatge": "https://exemple.com/milka.jpg"
+        },
+        {
+            "id": 15,
+            "pregunta": "Quina marca de cotxes japonesos té com a símbol tres diamants vermells?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Nissan"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Toyota"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Mitsubishi"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Honda"
+                }
+            ],
+            "resposta_correcta": 3,
+            "imatge": "https://exemple.com/mitsubishi.jpg"
+        },
+        {
+            "id": 16,
+            "pregunta": "Quina marca de tecnologia té un logotip amb una fulla de trèvol de tres fulles?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Adidas"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Under Armour"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Puma"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "New Balance"
+                }
+            ],
+            "resposta_correcta": 1,
+            "imatge": "https://exemple.com/adidas.jpg"
+        },
+        {
+            "id": 17,
+            "pregunta": "Quina marca de cotxes americana és coneguda pel seu logotip amb una creu daurada?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Chevrolet"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Ford"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Chrysler"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Jeep"
+                }
+            ],
+            "resposta_correcta": 1,
+            "imatge": "https://exemple.com/chevrolet.jpg"
+        },
+        {
+            "id": 18,
+            "pregunta": "Quina marca de moda utilitza un logotip amb una creu vermella sobre fons blanc?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Louis Vuitton"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Gucci"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Swatch"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Tommy Hilfiger"
+                }
+            ],
+            "resposta_correcta": 4,
+            "imatge": "https://exemple.com/tommyhilfiger.jpg"
+        },
+        {
+            "id": 19,
+            "pregunta": "Quina marca d'electrònica té com a lema 'Life's Good'?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "LG"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Sony"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Panasonic"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Philips"
+                }
+            ],
+            "resposta_correcta": 1,
+            "imatge": "https://exemple.com/lg.jpg"
+        },
+        {
+            "id": 20,
+            "pregunta": "Quina marca d'electrònica té com a logotip tres cercles de colors blau, verd i vermell?",
+            "respostes": [
+                {
+                    "id": 1,
+                    "etiqueta": "Apple"
+                },
+                {
+                    "id": 2,
+                    "etiqueta": "Windows"
+                },
+                {
+                    "id": 3,
+                    "etiqueta": "Samsung"
+                },
+                {
+                    "id": 4,
+                    "etiqueta": "Google Chrome"
+                }
+            ],
+            "resposta_correcta": 4,
+            "imatge": "https://exemple.com/chrome.jpg"
+        }
+    ]
+}
