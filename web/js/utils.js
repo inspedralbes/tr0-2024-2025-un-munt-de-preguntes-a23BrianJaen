@@ -1,7 +1,7 @@
 
 const app = document.getElementById("app")
 const enviarRespostes = document.getElementById("enviaRespostes")
-const cantPreg = 10
+const cantPreg = 2
 let data = []
 let estatPartida = crearEstatPartida(cantPreg)
 
@@ -43,7 +43,7 @@ async function inicializarApp() {
                 app.innerHTML += `${index + 1}- ${tituloPregunta} <br><br>`
                 for (const respuesta of pregunta.respostes) {
                         let resp = respuesta.etiqueta
-                        app.innerHTML += `<button class="botonRespuesta" data-index="${index}" data-respuestaId="${respuesta.id}">${resp}</button> <br>`
+                        app.innerHTML += `<button class="botonRespuesta" data-index="${index}" data-respuestaId="${respuesta.id}" required>${resp}</button> <br>`
                 }
                 app.innerHTML += '<br>'
         }
