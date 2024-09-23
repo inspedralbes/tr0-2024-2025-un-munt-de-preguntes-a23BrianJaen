@@ -13,6 +13,8 @@ function prepareData()
 
     $tenQuestions = array_slice($questions, 0, $cantPreg);
 
+    // coger la linea 6 a la 14 y meterlo en una funcion para que devuela la variable con las preguntas
+
     if (!isset($_SESSION["questions"])) {
         $_SESSION["questions"] = $tenQuestions;
     }
