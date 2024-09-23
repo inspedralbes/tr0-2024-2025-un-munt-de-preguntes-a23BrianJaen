@@ -1,7 +1,7 @@
 
 const app = document.getElementById("app")
 const enviarRespostes = document.getElementById("enviaRespostes")
-const cantPreg = 4
+const cantPreg = 10
 let data = []
 let estatPartida = crearEstatPartida(cantPreg)
 
