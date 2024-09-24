@@ -44,52 +44,35 @@ async function inicializarApp() {
         data = await getData()
         pintarPregunta(data)
 
-        // esto meterlo en una funciona aparte
-        anterior.addEventListener("click", () => {
-                if (indexPreg > 0) {
-                        indexPreg--
-                        console.log(`Index decrementa: ${indexPreg}`)
-                        pintarPregunta(data)
-                }
-        });
+        enviarRespostes.style.visibility = "hidden"
 
-        seguent.addEventListener("click", () => {
-                if (indexPreg < data.length - 1) {
-                        indexPreg++
-                        console.log(`Index aumenta: ${indexPreg}`)
-                        pintarPregunta(data)
-                }
-        });
+        if (indexPreg < data.length) {
+                anterior.addEventListener("click", () => {
+                        if (indexPreg > 0) {
+                                indexPreg--
+                                // console.log(`Index decrementa: ${indexPreg}`)
+                                pintarPregunta(data)
+                        }
+                })
 
-        enviarRespostes.addEventListener("click", async () => {
-                try {
-                        const resul = await sendData()
-                        console.log(resul)
-                } catch (error) {
-                        console.error('Error al enviar los datos:', error)
-                }
-        });
-}
-
-async function pintarPregunta(data) {
-        app.innerHTML = ""
-        let pregunta = data[indexPreg].pregunta
-        let respuestas = data[indexPreg].respostes
-
-        app.innerHTML += `${indexPreg + 1}- ${pregunta} <br><br>`
-
-        for (let index = 0; index < respuestas.length; index++) {
-                app.innerHTML += `<button class="botonRespuesta" data-index="${indexPreg}" data-respuestaId="${respuestas[index].id}" required>${respuestas[index].etiqueta}</button> <br>`
-        }
-
-        // Asignar los eventos a los botones de respuestas
-        const botonesRespuestas = document.getElementsByClassName("botonRespuesta")
-        for (const boton of botonesRespuestas) {
-                const respuestaId = boton.getAttribute("data-respuestaId")
-                const indexPreg = boton.getAttribute("data-index")
-                boton.addEventListener("click", () => {
-                        guardarRespuesta(indexPreg, respuestaId)
-                });
+                seguent.addEventListener("click", () => {
+                        if (indexPreg < data.length) {
+                                indexPreg++
+                                console.log(`Index aumenta: ${indexPreg}`)
+                                pintarPregunta(data)
+                        }
+                })
+        } else {
+                enviarRespostes.style.visibility = "visible"
+                enviarRespostes.addEventListener("click", async () => {
+                        try {
+                                const resul = await sendData()
+                                console.log(resul)
+                                // pintarResultatFinal(resul)
+                        } catch (error) {
+                                console.error('Error al enviar los datos:', error)
+                        }
+                })
         }
 }
 
@@ -100,13 +83,10 @@ function guardarRespuesta(indexPregunta, idResposta) {
                 if (indexPregunta == estatPartida.preguntes[iter].idPreg) {
                         posId = iter
                         estatPartida.preguntes[posId].resposta = idResposta
-                        console.log(`Id pregunta: ${estatPartida.preguntes[iter].idPreg}`)
-                        console.log(`Respuesta: ${estatPartida.preguntes[posId].resposta}`)
-                        // console.log(`!!!!!Index pregunta: ${indexPregunta} - Iterador: ${iter}`)
-                        // console.log(`Pregunta a cambiar: ${estatPartida.preguntes[indexPregunta].idPreg}`) // <- como hacerlo para cambiar solo la id de esa pregunta
+                        // console.log(`Id pregunta: ${estatPartida.preguntes[iter].idPreg}`)
+                        // console.log(`Respuesta: ${estatPartida.preguntes[posId].resposta}`)
                 }
         }
-
         pintarTablaPreguntas()
 }
 
@@ -121,5 +101,29 @@ function pintarTablaPreguntas() {
         tabla.innerHTML += `</table> <br>`
 }
 
+async function pintarPregunta(data) {
+        app.innerHTML = ""
+        let pregunta = data[indexPreg].pregunta
+        let respuestas = data[indexPreg].respostes
+
+        app.innerHTML += `${indexPreg + 1}- ${pregunta} <br><br>`
+
+        for (let index = 0; index < respuestas.length; index++) {
+                app.innerHTML += `<button class="botonRespuesta" data-index="${indexPreg}" data-respuestaId="${respuestas[index].id}" required>${respuestas[index].etiqueta}</button> <br>`
+        }
+
+        const botonesRespuestas = document.getElementsByClassName("botonRespuesta")
+        for (const boton of botonesRespuestas) {
+                const respuestaId = boton.getAttribute("data-respuestaId")
+                const indexPreg = boton.getAttribute("data-index")
+                boton.addEventListener("click", () => {
+                        guardarRespuesta(indexPreg, respuestaId)
+                });
+        }
+}
+
+function pintarResultatFinal(resultat) {
+
+}
 
 inicializarApp()
