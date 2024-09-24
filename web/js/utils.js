@@ -1,7 +1,11 @@
 
 const app = document.getElementById("app")
 const enviarRespostes = document.getElementById("enviaRespostes")
+const anterior = document.getElementById("anterior")
+const seguent = document.getElementById("seguent")
 const cantPreg = 2
+let indexPreg = 0
+
 let data = []
 let estatPartida = crearEstatPartida(cantPreg)
 
@@ -36,57 +40,73 @@ async function sendData() {
 }
 
 async function inicializarApp() {
-        data = await getData()
         pintarTablaPreguntas()
-        for (const [index, pregunta] of data.entries()) {
-                let tituloPregunta = pregunta.pregunta
-                app.innerHTML += `${index + 1}- ${tituloPregunta} <br><br>`
-                for (const respuesta of pregunta.respostes) {
-                        let resp = respuesta.etiqueta
-                        app.innerHTML += `<button class="botonRespuesta" data-index="${index}" data-respuestaId="${respuesta.id}" required>${resp}</button> <br>`
+        data = await getData()
+        pintarPregunta(data)
+
+        // esto meterlo en una funciona aparte
+        anterior.addEventListener("click", () => {
+                if (indexPreg > 0) {
+                        indexPreg--
+                        console.log(`Index decrementa: ${indexPreg}`)
+                        pintarPregunta(data)
                 }
-                app.innerHTML += '<br>'
+        });
+
+        seguent.addEventListener("click", () => {
+                if (indexPreg < data.length - 1) {
+                        indexPreg++
+                        console.log(`Index aumenta: ${indexPreg}`)
+                        pintarPregunta(data)
+                }
+        });
+
+        enviarRespostes.addEventListener("click", async () => {
+                try {
+                        const resul = await sendData()
+                        console.log(resul)
+                } catch (error) {
+                        console.error('Error al enviar los datos:', error)
+                }
+        });
+}
+
+async function pintarPregunta(data) {
+        app.innerHTML = ""
+        let pregunta = data[indexPreg].pregunta
+        let respuestas = data[indexPreg].respostes
+
+        app.innerHTML += `${indexPreg + 1}- ${pregunta} <br><br>`
+
+        for (let index = 0; index < respuestas.length; index++) {
+                app.innerHTML += `<button class="botonRespuesta" data-index="${indexPreg}" data-respuestaId="${respuestas[index].id}" required>${respuestas[index].etiqueta}</button> <br>`
         }
+
+        // Asignar los eventos a los botones de respuestas
         const botonesRespuestas = document.getElementsByClassName("botonRespuesta")
-        // console.log(botonesRespuestas)
-        for (const boton of botonesRespuestas) { // <- los tres . crea un nuevo array desde 0, pasar de un HTMLcollection a un array normal
-                const respuestaId = boton.getAttribute("data-respuestaId") //data-respuestaId: guarda datos en un elemento
+        for (const boton of botonesRespuestas) {
+                const respuestaId = boton.getAttribute("data-respuestaId")
                 const indexPreg = boton.getAttribute("data-index")
                 boton.addEventListener("click", () => {
                         guardarRespuesta(indexPreg, respuestaId)
-                })
+                });
         }
-        enviarRespostes.addEventListener("click", async () => {
-                try {
-                        // console.log(estatPartida.preguntes)
-                        const resul = await sendData();
-                        console.log(resul)
-                        // Aquí puedes llamar a getFinalResult() si es necesario
-                    } catch (error) {
-                        console.error('Error al enviar los datos:', error);
-                    }
-        })
 }
 
 function guardarRespuesta(indexPregunta, idResposta) {
-        const pregunta = data[indexPregunta]
-        const esCorrecta = pregunta.resposta_correcta == idResposta
 
         let posId = -1
-        // for (let iter = 0; iter < respostes.length; iter++) {
-        //         if (indexPregunta == iter) {
-        //                 posId = iter
-        //                 respostes[posId] = idResposta
-        //         }
-        // }
         for (let iter = 0; iter < estatPartida.preguntes.length; iter++) {
                 if (indexPregunta == estatPartida.preguntes[iter].idPreg) {
                         posId = iter
                         estatPartida.preguntes[posId].resposta = idResposta
+                        console.log(`Id pregunta: ${estatPartida.preguntes[iter].idPreg}`)
+                        console.log(`Respuesta: ${estatPartida.preguntes[posId].resposta}`)
                         // console.log(`!!!!!Index pregunta: ${indexPregunta} - Iterador: ${iter}`)
                         // console.log(`Pregunta a cambiar: ${estatPartida.preguntes[indexPregunta].idPreg}`) // <- como hacerlo para cambiar solo la id de esa pregunta
                 }
         }
+
         pintarTablaPreguntas()
 }
 
