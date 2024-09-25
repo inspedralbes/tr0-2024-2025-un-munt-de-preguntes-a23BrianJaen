@@ -3,6 +3,7 @@ const app = document.getElementById("app")
 const enviarRespostes = document.getElementById("enviaRespostes")
 const anterior = document.getElementById("anterior")
 const seguent = document.getElementById("seguent")
+const nouJoc = document.getElementById("nouJoc")
 const cantPreg = 2
 
 let indexPreg = 0
@@ -32,11 +33,24 @@ async function sendData() {
         const respuestas = await fetch(URL, {
                 method: "POST",
                 headers: {
-                        "Content-Type": "application/json" // indicar que envio un JSON
+                        "Content-Type": "application/json"
                 },
                 body: JSON.stringify(estatPartida.preguntes)
         })
         return respuestas.json()
+}
+
+async function endQuiz() {
+        const URL = `./php/generarNouJoc.php`
+        const respuesta = await fetch(URL, {
+                method: "GET",
+                headers: {
+                        "Content-Type": "application/json"
+                },
+        })
+        console.log(`Respuesta del fin de juego ${await respuesta.json()}`)
+        window.location.href = "../web/"
+        return respuesta
 }
 
 async function inicializarApp() {
@@ -90,6 +104,8 @@ async function pintarPregunta(data) {
         app.innerHTML = ""
         // console.log(`Index pregunta en la funcion de pintar pregunta: ${indexPreg}`)
         enviarRespostes.style.visibility = "hidden"
+        nouJoc.style.visibility = "hidden"
+
         if (indexPreg < data.length) {
                 let pregunta = data[indexPreg].pregunta
                 let respuestas = data[indexPreg].respostes
@@ -120,6 +136,9 @@ async function pintarPregunta(data) {
                                 console.error('Error al enviar los datos:', error)
                         }
                 })
+                nouJoc.addEventListener("click", async () =>{
+                        endQuiz()
+                })
         }
 }
 
@@ -130,12 +149,14 @@ function pintarResultatFinal(resultat) {
         enviarRespostes.style.visibility = "hidden"
         anterior.style.visibility = "hidden"
         seguent.style.visibility = "hidden"
-        
-        if(resultat.respCorr == undefined){
+
+        if (resultat.respCorr == undefined) {
                 resultat.respCrr = 0
         }
         app.innerHTML += `<h2>Resultat final</h2>
         Preguntes correctes ${resultat.respCorr}/${resultat.totalPreg}`
+
+        nouJoc.style.visibility = "visible"
 
         console.log(resultat.respCorr)
         console.log(resultat.totalPreg)
