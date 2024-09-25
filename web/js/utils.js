@@ -114,8 +114,8 @@ async function pintarPregunta(data) {
                 enviarRespostes.addEventListener("click", async () => {
                         try {
                                 const resul = await sendData()
-                                console.log(resul)
-                                // pintarResultatFinal(resul)
+                                // console.log(resul)
+                                pintarResultatFinal(resul)
                         } catch (error) {
                                 console.error('Error al enviar los datos:', error)
                         }
@@ -125,6 +125,20 @@ async function pintarPregunta(data) {
 
 function pintarResultatFinal(resultat) {
 
+        app.innerHTML = ``
+
+        enviarRespostes.style.visibility = "hidden"
+        anterior.style.visibility = "hidden"
+        seguent.style.visibility = "hidden"
+        
+        if(resultat.respCrr == undefined){
+                resultat.respCrr = 0
+        }
+        app.innerHTML += `<h2>Resultat final</h2>
+        Preguntes correctes ${resultat.respCrr}/${resultat.totalPreg}`
+
+        console.log(resultat.respCrr)
+        console.log(resultat.totalPreg)
 }
 
 inicializarApp()
