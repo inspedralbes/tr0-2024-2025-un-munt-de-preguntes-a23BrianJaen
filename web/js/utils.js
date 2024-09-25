@@ -51,11 +51,10 @@ async function inicializarApp() {
                         pintarPregunta(data)
                 }
         })
-
         seguent.addEventListener("click", () => {
                 if (indexPreg < data.length) {
                         indexPreg++
-                        console.log(`Index aumenta: ${indexPreg}`)
+                        // console.log(`Index aumenta: ${indexPreg}`)
                         pintarPregunta(data)
                 }
         })
@@ -89,16 +88,16 @@ function pintarTablaPreguntas() {
 
 async function pintarPregunta(data) {
         app.innerHTML = ""
-        console.log(`Index pregunta en la funcion de pintar pregunta: ${indexPreg}`)
+        // console.log(`Index pregunta en la funcion de pintar pregunta: ${indexPreg}`)
         enviarRespostes.style.visibility = "hidden"
         if (indexPreg < data.length) {
                 let pregunta = data[indexPreg].pregunta
                 let respuestas = data[indexPreg].respostes
 
-                app.innerHTML += `${indexPreg + 1}- ${data[indexPreg].pregunta} <br><br>`
+                app.innerHTML += `${indexPreg + 1}- ${pregunta} <br><br>`
 
-                for (let index = 0; index < data[indexPreg].respostes.length; index++) {
-                        app.innerHTML += `<button class="botonRespuesta" data-index="${indexPreg}" data-respuestaId="${data[indexPreg].respostes[index].id}" required>${data[indexPreg].respostes[index].etiqueta}</button> <br>`
+                for (let index = 0; index < respuestas.length; index++) {
+                        app.innerHTML += `<button class="botonRespuesta" data-index="${indexPreg}" data-respuestaId="${respuestas[index].id}" required>${data[indexPreg].respostes[index].etiqueta}</button> <br>`
                 }
                 const botonesRespuestas = document.getElementsByClassName("botonRespuesta")
                 for (const boton of botonesRespuestas) {
@@ -109,11 +108,14 @@ async function pintarPregunta(data) {
                         })
                 }
         } else {
+                app.innerHTML += `<h3>Enhorabona, has acabat el qüestionari.</h3>
+                <p>Pots tornar enrere si vols repondre de nou abans d'envia les respostes.</p>`
                 enviarRespostes.style.visibility = "visible"
                 enviarRespostes.addEventListener("click", async () => {
                         try {
                                 const resul = await sendData()
                                 console.log(resul)
+                                // pintarResultatFinal(resul)
                         } catch (error) {
                                 console.error('Error al enviar los datos:', error)
                         }
