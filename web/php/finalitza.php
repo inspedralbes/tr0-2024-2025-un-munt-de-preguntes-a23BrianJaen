@@ -6,8 +6,6 @@ ini_set('display_errors', 'On');
 
 function getData()
 {
-
-
     $data = json_decode(file_get_contents('php://input'), true);
 
     // Verifica si los datos son válidos

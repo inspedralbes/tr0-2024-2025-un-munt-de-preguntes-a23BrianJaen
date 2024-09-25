@@ -4,8 +4,8 @@ const enviarRespostes = document.getElementById("enviaRespostes")
 const anterior = document.getElementById("anterior")
 const seguent = document.getElementById("seguent")
 const cantPreg = 2
-let indexPreg = 0
 
+let indexPreg = 0
 let data = []
 let estatPartida = crearEstatPartida(cantPreg)
 
@@ -44,36 +44,22 @@ async function inicializarApp() {
         data = await getData()
         pintarPregunta(data)
 
-        enviarRespostes.style.visibility = "hidden"
+        anterior.addEventListener("click", () => {
+                if (indexPreg > 0) {
+                        indexPreg--
+                        // console.log(`Index decrementa: ${indexPreg}`)
+                        pintarPregunta(data)
+                }
+        })
 
-        if (indexPreg < data.length) {
-                anterior.addEventListener("click", () => {
-                        if (indexPreg > 0) {
-                                indexPreg--
-                                // console.log(`Index decrementa: ${indexPreg}`)
-                                pintarPregunta(data)
-                        }
-                })
+        seguent.addEventListener("click", () => {
+                if (indexPreg < data.length) {
+                        indexPreg++
+                        console.log(`Index aumenta: ${indexPreg}`)
+                        pintarPregunta(data)
+                }
+        })
 
-                seguent.addEventListener("click", () => {
-                        if (indexPreg < data.length) {
-                                indexPreg++
-                                console.log(`Index aumenta: ${indexPreg}`)
-                                pintarPregunta(data)
-                        }
-                })
-        } else {
-                enviarRespostes.style.visibility = "visible"
-                enviarRespostes.addEventListener("click", async () => {
-                        try {
-                                const resul = await sendData()
-                                console.log(resul)
-                                // pintarResultatFinal(resul)
-                        } catch (error) {
-                                console.error('Error al enviar los datos:', error)
-                        }
-                })
-        }
 }
 
 function guardarRespuesta(indexPregunta, idResposta) {
@@ -103,22 +89,35 @@ function pintarTablaPreguntas() {
 
 async function pintarPregunta(data) {
         app.innerHTML = ""
-        let pregunta = data[indexPreg].pregunta
-        let respuestas = data[indexPreg].respostes
+        console.log(`Index pregunta en la funcion de pintar pregunta: ${indexPreg}`)
+        enviarRespostes.style.visibility = "hidden"
+        if (indexPreg < data.length) {
+                let pregunta = data[indexPreg].pregunta
+                let respuestas = data[indexPreg].respostes
 
-        app.innerHTML += `${indexPreg + 1}- ${pregunta} <br><br>`
+                app.innerHTML += `${indexPreg + 1}- ${data[indexPreg].pregunta} <br><br>`
 
-        for (let index = 0; index < respuestas.length; index++) {
-                app.innerHTML += `<button class="botonRespuesta" data-index="${indexPreg}" data-respuestaId="${respuestas[index].id}" required>${respuestas[index].etiqueta}</button> <br>`
-        }
-
-        const botonesRespuestas = document.getElementsByClassName("botonRespuesta")
-        for (const boton of botonesRespuestas) {
-                const respuestaId = boton.getAttribute("data-respuestaId")
-                const indexPreg = boton.getAttribute("data-index")
-                boton.addEventListener("click", () => {
-                        guardarRespuesta(indexPreg, respuestaId)
-                });
+                for (let index = 0; index < data[indexPreg].respostes.length; index++) {
+                        app.innerHTML += `<button class="botonRespuesta" data-index="${indexPreg}" data-respuestaId="${data[indexPreg].respostes[index].id}" required>${data[indexPreg].respostes[index].etiqueta}</button> <br>`
+                }
+                const botonesRespuestas = document.getElementsByClassName("botonRespuesta")
+                for (const boton of botonesRespuestas) {
+                        const respuestaId = boton.getAttribute("data-respuestaId")
+                        const indexPreg = boton.getAttribute("data-index")
+                        boton.addEventListener("click", () => {
+                                guardarRespuesta(indexPreg, respuestaId)
+                        })
+                }
+        } else {
+                enviarRespostes.style.visibility = "visible"
+                enviarRespostes.addEventListener("click", async () => {
+                        try {
+                                const resul = await sendData()
+                                console.log(resul)
+                        } catch (error) {
+                                console.error('Error al enviar los datos:', error)
+                        }
+                })
         }
 }
 
