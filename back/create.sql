@@ -14,7 +14,7 @@ DROP TABLE IF EXISTS respostes;
 CREATE TABLE respostes (
 	idResposta INT AUTO_INCREMENT PRIMARY KEY,
     resposta VARCHAR(50),
-    respostaCorrecta BOOLEAN,
+    respostaCorrecta INT,
     idPreg INT,
     FOREIGN KEY (idPreg) REFERENCES preguntes(idPregunta) 
 );

@@ -133,7 +133,7 @@ async function pintarPregunta(data, indexPreg, estatPartida) {
         if (indexPreg < data.length) {
                 mostrarJuego(data, indexPreg, estatPartida)
         } else {
-                mostrarResultadoFinal(estatPartida) // <- Pasar posible data
+                mostrarResultadoFinal(estatPartida)
         }
 }
 
