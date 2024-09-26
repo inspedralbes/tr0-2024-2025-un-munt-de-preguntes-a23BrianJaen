@@ -37,12 +37,13 @@ function tablaRespostes($conn, $data)
     foreach ($data as $index => $row) {
         $respActu = $data[$index];
 
-        foreach ($respActu['respostes'] as $resposta) {
+        foreach ($respActu['respostes'] as $indexResp => $resposta) {
+            $esCorrecta = ($indexResp + 1 == $respActu['resposta_correcta']) ? 1 : 0;
             $stmt->bind_param(
                 'sii',
-                $resposta['etiqueta'],         
-                $respActu['resposta_correcta'], 
-                $respActu['id']                 
+                $resposta['etiqueta'],
+                $esCorrecta, // preguntar al Pol como hacer para identificar que cada preguntas si es correcta poner true o false
+                $respActu['id']
             );
 
             if (!$stmt->execute()) {
@@ -53,9 +54,28 @@ function tablaRespostes($conn, $data)
     }
 
     $stmt->close();
-    $conn->close();
 }
+
+
+// foreach ($preguntes as $index => $row) {
+//     $respActu = $preguntes[$index];
+//     echo "Pregunta ID: " . $respActu['id'] . "<br>";
+//     echo "Pregunta: " . $respActu['pregunta'] . "<br><br>";
+
+//     foreach ($respActu['respostes'] as $indexResp => $resposta) {
+//         $esCorrecta = ($indexResp + 1 == $respActu['resposta_correcta']) ? 1 : 0;
+//         echo "Index resposta " . $indexResp + 1 . "<br>";
+//         // Mostrar respuesta con el formato adecuado
+//         echo "Resposta: " . $resposta['etiqueta'] . "<br>";
+//         echo 'Correcta: ' . ($esCorrecta ? '<p style="color: red;">SI</p>' : "No") . "<br><br>";
+//     }
+//     echo "---------------------------------<br><br>";
+// }
+
+
 
 tablaPreguntas($conn, $preguntes);
 tablaRespostes($conn, $preguntes);
+
+$conn->close();
 ?>
