@@ -22,7 +22,7 @@ async function getData(CANTPREG) {
 }
 
 async function sendData(estatPartida) {
-        console.log(`Se muestra estatPartida: ${estatPartida}`)
+        // console.log(`Se muestra estatPartida: ${estatPartida}`)
         const URL = `./php/finalitza.php`
         const RESPUESTAS = await fetch(URL, {
                 method: "POST",
@@ -49,7 +49,7 @@ async function endQuiz() {
 async function inicializarApp() {
         const ANTERIOR = document.getElementById("anterior")
         const SEGUENT = document.getElementById("seguent")
-        const CANTPREG = 10
+        const CANTPREG = 4
         let data = []
         let indexPreg = 0
 
