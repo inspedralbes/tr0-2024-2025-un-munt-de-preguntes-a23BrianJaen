@@ -25,7 +25,6 @@ $respostes = new stdClass();
 $respostes->respCorr = 0;
 $respostes->totalPreg = 0;
 
-// Recorre las respuestas recibidas y compara con las respuestas correctas de la sesión
 foreach (getData() as $index["idPreg"] => $idRespuesta) {
     if ($idRespuesta["resposta"] == $_SESSION["respuestas"][$index["idPreg"]]) {
         $respostes->respCorr++;
@@ -36,4 +35,5 @@ foreach (getData() as $index["idPreg"] => $idRespuesta) {
 $response = $respostes;
 
 echo json_encode($response);
+
 ?>

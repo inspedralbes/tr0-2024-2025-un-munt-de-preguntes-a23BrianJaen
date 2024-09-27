@@ -3,10 +3,15 @@ session_start();
 
 function prepareData()
 {
-    $json_data = file_get_contents("../../back/data.json");
-    $data = json_decode($json_data, true);
+    include("getDataBBDD.php");
+    $data = transformDataJson();
+    if ($data == null) {
+        echo "no funciona";
+        die();
+    }
 
-    $questions = $data['preguntes'];
+    $questions = $data["preguntes"];
+
     shuffle($questions);
 
     $cantPreg = isset($_GET['cantPreg']) ? $_GET['cantPreg'] : 10;
@@ -16,25 +21,24 @@ function prepareData()
     if (!isset($_SESSION["questions"])) {
         $_SESSION["questions"] = $tenQuestions;
     }
-
+    
     $preguntesArray = [];
-
+    
     if (!isset($_SESSION["respuestas"])) {
         foreach ($_SESSION["questions"] as $index => $pregunta) {
-            $preguntesArray[$index] = $pregunta["resposta_correcta"];
+            $preguntesArray[$index] = $pregunta["indexRespostaCorrecta"];
         }
         $_SESSION["respuestas"] = $preguntesArray;
     }
 
     foreach ($_SESSION["questions"] as $index => &$pregunta) { // & <- es importante por que las modificaciones que se hagan afectan a los elementos originales del array
-        unset($pregunta['resposta_correcta']);
+        unset($pregunta['indexRespostaCorrecta']);
     }
-
+    
     return $_SESSION["questions"];
 }
 
 $questions = prepareData();
-
 
 echo json_encode($questions);
 ?>

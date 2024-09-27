@@ -73,7 +73,7 @@ function tablaRespostes($conn, $data)
 // }
 
 
-
+// poner condicion que en caso de que ya se haya insertado no lo vuelva a insertar
 tablaPreguntas($conn, $preguntes);
 tablaRespostes($conn, $preguntes);
 

@@ -2,6 +2,9 @@
 const APP = document.getElementById("app")
 const ENVIARRESPOSTES = document.getElementById("enviaRespostes")
 const NOUJOC = document.getElementById("nouJoc")
+let indexPreg = 0
+
+let estatPartida = null
 
 function crearEstatPartida(cantantidadPreguntes) {
         let estatPartida = {
@@ -51,58 +54,41 @@ async function inicializarApp() {
         const SEGUENT = document.getElementById("seguent")
         const CANTPREG = 4
         let data = []
-        let indexPreg = 0
 
         data = await getData(CANTPREG)
-        let estatPartida = crearEstatPartida(data.length)
-        pintarPregunta(data, indexPreg, estatPartida)
+        estatPartida = crearEstatPartida(data.length)
+        cargarPreguntas(data)
 
         ANTERIOR.addEventListener("click", () => {
-                if (indexPreg >= 0) {
+                if (indexPreg > 0) {
                         indexPreg--
-                        // console.log(`Index decrementa: ${indexPreg}`)
-                        pintarPregunta(data, indexPreg, estatPartida)
+                        mostrarPreguntaActual()
                 }
         })
         SEGUENT.addEventListener("click", () => {
                 if (indexPreg < data.length) {
                         indexPreg++
-                        // console.log(`Index aumenta: ${indexPreg}`)
-                        pintarPregunta(data, indexPreg, estatPartida)
+                        if(indexPreg >= data.length){
+                                console.log("me salgo del rango")
+                                mostrarResultadoFinal(estatPartida)
+                        }
+                        mostrarPreguntaActual()
                 }
         })
 }
 
-function guardarRespuesta(indexPregunta, idResposta, estatPartida) {
+function mostrarPreguntaActual() {
+        const preguntas = document.getElementsByClassName("pregunta")
 
-        let posId = -1
-        for (let iter = 0; iter < estatPartida.preguntes.length; iter++) {
-                if (indexPregunta == estatPartida.preguntes[iter].idPreg) {
-                        posId = iter
-                        estatPartida.preguntes[posId].resposta = idResposta
-                        // console.log(`Id pregunta: ${estatPartida.preguntes[iter].idPreg}`)
-                        // console.log(`Respuesta: ${estatPartida.preguntes[posId].resposta}`)
+        for (const [index, pregunta] of [...preguntas].entries()) {
+                if (indexPreg === index) {
+                        pregunta.classList.add("visible")
+                        pregunta.classList.remove("oculto")
+                } else {
+                        pregunta.classList.add("oculto")
+                        pregunta.classList.remove("visible")
+
                 }
-        }
-}
-
-
-function mostrarJuego(data, indexPreg, estatPartida) {
-        let pregunta = data[indexPreg].pregunta
-        let respuestas = data[indexPreg].respostes
-
-        APP.innerHTML += `${indexPreg + 1}- ${pregunta} <br><br>`
-
-        for (let index = 0; index < respuestas.length; index++) {
-                APP.innerHTML += `<button class="botonRespuesta" data-index="${indexPreg}" data-respuestaId="${respuestas[index].id}" required>${data[indexPreg].respostes[index].etiqueta}</button> <br>`
-        }
-        const BOTONESRESPUESTAS = document.getElementsByClassName("botonRespuesta")
-        for (const BOTON of BOTONESRESPUESTAS) {
-                const RESPUESTAID = BOTON.getAttribute("data-respuestaId")
-                const INDEXPREG = BOTON.getAttribute("data-index")
-                BOTON.addEventListener("click", () => {
-                        guardarRespuesta(INDEXPREG, RESPUESTAID, estatPartida)
-                })
         }
 }
 
@@ -124,16 +110,33 @@ function mostrarResultadoFinal(estatPartida) {
         })
 }
 
-async function pintarPregunta(data, indexPreg, estatPartida) {
-        APP.innerHTML = ""
-        // console.log(`Index pregunta en la funcion de pintar pregunta: ${indexPreg}`)
-        ENVIARRESPOSTES.style.visibility = "hidden"
-        NOUJOC.style.visibility = "hidden"
+async function cargarPreguntas(data) {
 
-        if (indexPreg < data.length) {
-                mostrarJuego(data, indexPreg, estatPartida)
-        } else {
-                mostrarResultadoFinal(estatPartida)
+        for (const [index, pregunta] of data.entries()) {
+                // console.log(pregunta)
+                const divPregunta = document.createElement("div")
+                divPregunta.classList.add("pregunta")
+                if (indexPreg === index) {
+                        divPregunta.classList.add("visible")
+                } else {
+                        divPregunta.classList.add("oculto")
+                }
+                const titulo = document.createElement("p")
+                titulo.textContent = pregunta.pregunta
+                divPregunta.appendChild(titulo)
+                for (const resposta of pregunta.respostes) {
+                        const divRespostes = document.createElement("div")
+                        const respostaBoton = document.createElement("button")
+                        respostaBoton.addEventListener("click", () => {
+                                // console.log(estatPartida,resposta)
+                                estatPartida.preguntes[index].resposta = resposta.indexResposta
+
+                        })
+                        respostaBoton.textContent = resposta.resposta
+                        divRespostes.appendChild(respostaBoton)
+                        divPregunta.appendChild(divRespostes)
+                }
+                APP.appendChild(divPregunta)
         }
 }
 
@@ -141,16 +144,16 @@ function pintarResultatFinal(resultat) {
 
         APP.innerHTML = ``
 
-        ENVIARRESPOSTES.style.visibility = "hidden"
-        anterior.style.visibility = "hidden"
-        seguent.style.visibility = "hidden"
+        ENVIARRESPOSTES.style.display = "none"
+        anterior.style.display = "none"
+        seguent.style.display = "none"
 
         if (resultat.respCorr == undefined) {
                 resultat.respCrr = 0
         }
         APP.innerHTML += `<h2>Resultat final</h2>
         Preguntes correctes ${resultat.respCorr}/${resultat.totalPreg}`
-        NOUJOC.style.visibility = "visible"
+        NOUJOC.style.display = "block"
 
         // console.log(resultat.respCorr)
         // console.log(resultat.totalPreg)
