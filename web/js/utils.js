@@ -204,6 +204,7 @@ function mostrarSeleccionNombre(nombresGuardados, PLAYER) {
                         const nombreAEliminar = selectEliminar.value
                         if (nombreAEliminar) {
                                 eliminarNombre(nombreAEliminar)
+                                location.reload()
                         } else {
                                 alert("Selecciona un nombre para eliminar.")
                         }
@@ -236,6 +237,7 @@ function mostrarSeleccionNombre(nombresGuardados, PLAYER) {
                                 nombresGuardados.push(nombre)
                                 localStorage.setItem("nombresUsuarios", JSON.stringify(nombresGuardados)) // Guardar en localStorage
                                 console.log(`Nombre guardado: ${nombre}`)
+                                location.reload()
                         } else {
                                 alert("El nom ja està guardat. Prova amb un altre.")
                         }
@@ -253,6 +255,7 @@ function mostrarSeleccionNombre(nombresGuardados, PLAYER) {
 }
 
 function eliminarNombre(nombre) {
+        location.reload()
         // Obtengo los nombres guardados en el localStorage o en un array vacio si no existe
         const nombresGuardados = JSON.parse(localStorage.getItem("nombresUsuarios")) || []
         
@@ -273,7 +276,7 @@ function eliminarNombre(nombre) {
     
 
 // Función para iniciar el juego con el nombre seleccionado
-function iniciarJuego(nombreJugador, divPlayer) {
+function iniciarJuego(nombreJugador, divPlayer) { // decirle al Alvaro el motivo por que recargo la pagina
         console.log(`El jugador ${nombreJugador} está listo para jugar.`);
         inicializarApp()
         divPlayer.classList.add("oculto")
