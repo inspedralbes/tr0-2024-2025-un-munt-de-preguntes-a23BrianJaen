@@ -1,7 +1,7 @@
 <?php
 function transformDataJson()
 {
-    include("conexio.php");
+    require_once "conexio.php";
 
     $queryPreguntes = "SELECT * FROM preguntes";
     $resPreg = $conn->query($queryPreguntes);

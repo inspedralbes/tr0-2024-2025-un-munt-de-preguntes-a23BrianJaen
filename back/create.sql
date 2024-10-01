@@ -6,15 +6,15 @@ DROP TABLE IF EXISTS preguntes;
 
 CREATE TABLE preguntes (
 	idPregunta INT AUTO_INCREMENT PRIMARY KEY,
-    pregunta VARCHAR(100)
+    pregunta VARCHAR(100) NOT NULL
 );
 
 DROP TABLE IF EXISTS respostes;
 
 CREATE TABLE respostes (
 	idResposta INT AUTO_INCREMENT PRIMARY KEY,
-    resposta VARCHAR(50),
-    respostaCorrecta INT,
-    idPreg INT,
-    FOREIGN KEY (idPreg) REFERENCES preguntes(idPregunta) 
+    resposta VARCHAR(50) NOT NULL,
+    respostaCorrecta INT NOT NULL,
+    idPreg INT NOT NULL,
+    FOREIGN KEY (idPreg) REFERENCES preguntes(idPregunta) ON DELETE CASCADE
 );

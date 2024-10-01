@@ -1,5 +1,5 @@
 <?php
-include("./conexio.php");
+require_once "conexio.php";
 
 if ($conn->connect_error) {
     echo "Conexio no establerta";

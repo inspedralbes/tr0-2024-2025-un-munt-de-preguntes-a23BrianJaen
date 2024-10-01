@@ -1,7 +1,133 @@
+/* Reset básico para mejorar compatibilidad en todos los navegadores */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #0044cc;
+    color: #fff;
+}
+
+header h1 {
+    font-size: 2em;
+}
+
+main {
+    width: 80%;
+    margin: 0 auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #fff;
+}
+
+table, th, td {
+    border: 1px solid black; /* Bordes negros finos */
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    vertical-align: top; /* Para que las respuestas se alineen correctamente */
+}
+
+th {
+    background-color: #0044cc;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Estilo específico para las respuestas */
+td ul {
+    padding-left: 20px;
+}
+
+td ul li {
+    list-style-type: disc; /* Estilo de la lista */
+    margin-bottom: 5px;
+}
+
+/* Botones de acción */
+button {
+    padding: 5px 10px;
+    border: 1px solid black;
+    background-color: #0044cc;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 10px; /* Separación entre botones */
+}
+
+button:last-child {
+    margin-right: 0; /* Elimina el margen en el último botón */
+}
+
+button:hover {
+    background-color: #003399;
+}
+
+/* Estilos para ocultar secciones */
 .oculto {
     display: none;
 }
 
-.visible{
+.visible{ /* Quitarlo posiblemente */
     display: block;
+}
+
+/* Estilo del formulario de inserción */
+form {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form input[type="text"],
+form input[type="number"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+}
+
+form button {
+    background-color: #28a745;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #218838;
+}
+
+/* Estilo del pie de página */
+footer {
+    text-align: center;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #0044cc;
+    color: #fff;
 }

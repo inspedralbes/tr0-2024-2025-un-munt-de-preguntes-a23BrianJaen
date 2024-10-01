@@ -3,7 +3,8 @@ session_start();
 
 function prepareData()
 {
-    include("getDataBBDD.php");
+    require_once "getDataBBDD.php";
+
     $data = transformDataJson();
     if ($data == null) {
         echo "no funciona";

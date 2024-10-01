@@ -213,7 +213,7 @@ function mostrarSeleccionNombre(nombresGuardados, PLAYER) {
                 divPlayer.appendChild(buttonEliminar)
         } else {
                 const mensaje = document.createElement("p")
-                mensaje.textContent = "No hay nombres guardados. Por favor, agrega uno."
+                mensaje.textContent = "No hi ha noms enmagatzemats. Si us plau, introdueix-ne un."
                 divPlayer.appendChild(mensaje)
         }
 
