@@ -1,7 +1,5 @@
 const MOSTRAPREGUNTES = document.getElementById("mostraPreguntes")
 
-let data = []
-
 async function getData() {
     const URL = `./php/panelBack.php`
     const REQUEST = await fetch(URL)
@@ -10,21 +8,33 @@ async function getData() {
 }
 
 async function mostrarBBDD() {
+    let data = []
     data = await getData()
-    // console.log(data)
     cargarPreguntas(data)
 }
 
-async function sendData(formulario) {
+async function sendDataInsert(formularioInsert) {
     const URL = `./php/insertarPregunta.php`
     const RESPONSE = await fetch(URL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: formulario
+        body: formularioInsert
     })
-    // return RESPUESTAS.json()
+}
+
+async function sendDataUpdate(formularioUpdate) {
+    // console.log(formularioUpdate)
+    const URL = `./php/editarPregunta.php`
+    const RESPONSE = await fetch(URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: formularioUpdate
+    })
+
 }
 
 async function cargarPreguntas(data) {
@@ -78,14 +88,11 @@ async function cargarPreguntas(data) {
 
         let respCorr = false
 
-        // Botón Editar
-
-        // const celdaAccions = document.createElement("td")
-
         // Añadir las respuestas y las respuestas correctas
         for (const [indexResp, resposta] of pregunta.respostes.entries()) {
             const itemResposta = document.createElement("li")
             itemResposta.textContent = resposta.resposta
+            itemResposta.textContent += ` ${resposta.idResposta} 🢘 ID`
             listaRespostes.appendChild(itemResposta)
 
             respCorr = pregunta.respostes[indexResp].respostaCorrecta == 1 ? "true" : "false"
@@ -94,12 +101,6 @@ async function cargarPreguntas(data) {
             respostaCorr.textContent = respCorr
 
             listaRespostesCorrectes.appendChild(respostaCorr)
-
-            // botoEdit.addEventListener("click", () => {
-            //     console.log(`Editant la pregunta: ${pregunta.idPregunta} - ${resposta.resposta}`)
-            //     editaPregunta(pregunta, resposta.resposta)
-            // })
-            // celdaAccions.appendChild(botoEdit)
         }
 
         celdaRespostes.appendChild(listaRespostes)
@@ -116,8 +117,9 @@ async function cargarPreguntas(data) {
 
         botoEdit.addEventListener("click", () => {
             console.log(`Editant la pregunta: ${pregunta.idPregunta} - ${pregunta.pregunta}`)
-            editaPregunta(pregunta, pregunta.idPregunta)
+            editaPregunta(pregunta)
         })
+
         celdaAccions.appendChild(botoEdit)
 
         // Botón Eliminar
@@ -129,10 +131,8 @@ async function cargarPreguntas(data) {
         })
         celdaAccions.appendChild(botoEliminar)
 
-        // Agregar la celda de acciones a la fila
         filaPregunta.appendChild(celdaAccions)
 
-        // Añadir la fila completa al cuerpo de la tabla
         cos.appendChild(filaPregunta)
     }
 
@@ -160,26 +160,9 @@ async function cargarPreguntas(data) {
 }
 
 
-function editaPregunta(pregunta, idPregunta) {
-    // MOSTRAPREGUNTES.classList.add("oculto")
+function editaPregunta(pregunta) {
 
-    // const editar = document.getElementById("editar")
-
-    // const divEditar = document.createElement("div")
-    // const formulario = document.createElement("form")
-    // formulario.id = "formularioEditar"
-
-    // document.body.appendChild(formulario)
-
-    // const formularioEditar = document.getElementById("formularioEditar")
-
-    // let pregunta = document.getElementById("resultado").textContent;
-    // document.getElementsByTagName('pregunta').value = "sekso";
-
-
-    // editar.appendChild(divEditar)
-
-    console.log(pregunta)
+    // console.log(pregunta)
 
     MOSTRAPREGUNTES.classList.add("oculto")
 
@@ -194,29 +177,43 @@ function editaPregunta(pregunta, idPregunta) {
 
     document.body.appendChild(FORMULARI)
 
-    const FORMULARIeditar = document.getElementById("formulariEditar")
+    const FORMULARIEditar = document.getElementById("formulariEditar")
+
+    const INPUTID = document.createElement("input")
+    INPUTID.type = "text"
+    INPUTID.placeholder = "Id pregunta"
+    INPUTID.name = "idPregunta"
+    INPUTID.value = pregunta.idPregunta
+    FORMULARIEditar.appendChild(INPUTID)
 
     const INPUTPREG = document.createElement("input")
     INPUTPREG.type = "text"
     INPUTPREG.placeholder = "Introdueix la pregunta"
     INPUTPREG.name = "pregunta"
     INPUTPREG.value = pregunta.pregunta
-    FORMULARIeditar.appendChild(INPUTPREG)
+    FORMULARIEditar.appendChild(INPUTPREG)
 
     const CANTRESP = 4
 
-    
     for (let i = 0; i < CANTRESP; i++) {
-        // console.log(pregunta.respostes[i].resposta)
+        // Campo de respuesta de texto
         const INPUTRESP = document.createElement("input")
         INPUTRESP.type = "text"
         INPUTRESP.placeholder = `Resposta ${i + 1}`
         INPUTRESP.name = `idResp${i + 1}`
         INPUTRESP.value = pregunta.respostes[i].resposta
-        FORMULARIeditar.appendChild(INPUTRESP)
+        FORMULARIEditar.appendChild(INPUTRESP)
+
+        // Campo de ID de la respuesta
+        const INPUTIDRESP = document.createElement("input")
+        INPUTIDRESP.type = "text"
+        INPUTIDRESP.name = `idResposta${i + 1}`
+        INPUTIDRESP.value = pregunta.respostes[i].idResposta
+        INPUTIDRESP.readOnly = true  // Campo solo de lectura
+        FORMULARIEditar.appendChild(INPUTIDRESP)
     }
 
-    console.log(pregunta.indexRespostaCorrecta)
+    // console.log(pregunta.indexRespostaCorrecta)
 
     const INPUTRESPCORR = document.createElement("input")
     INPUTRESPCORR.type = "number"
@@ -228,22 +225,26 @@ function editaPregunta(pregunta, idPregunta) {
     const botoSubmit = document.createElement("button")
     botoSubmit.type = "submit"
     botoSubmit.textContent = "Edita"
-    FORMULARIeditar.appendChild(botoSubmit)
+    FORMULARIEditar.appendChild(botoSubmit)
 
-    FORMULARIeditar.addEventListener("submit", async (event) => {
+    FORMULARIEditar.addEventListener("submit", async (event) => {
         event.preventDefault()
 
-        // const formData = new FormData(FORMULARIINSRT)
+        const formData = new FormData(FORMULARIEditar)
 
-        // const formObject = {}
-        // formData.forEach((valor, clau) => {
-        //     formObject[clau] = valor
-        // })
+        const formObject = {}
+        formData.forEach((valor, clau) => {
+            formObject[clau] = valor
+        })
 
-        // const jsonData = JSON.stringify(formObject)
+        const jsonData = JSON.stringify(formObject)
+
         // console.log(jsonData)
 
-        // sendData(jsonData)
+        await sendDataUpdate(jsonData)
+
+        const actualizaData = await getData()
+        cargarPreguntas(actualizaData)
 
         // preguntarle al Alvaro como refrescar la página
         MOSTRAPREGUNTES.classList.remove("oculto")
@@ -258,7 +259,7 @@ function editaPregunta(pregunta, idPregunta) {
 async function eliminarPregunta(idPregunta) {
     const idPreg = { idPreg: idPregunta }
 
-    console.log(JSON.stringify(idPreg))
+    // console.log(JSON.stringify(idPreg))
 
     const URL = `./php/eliminarPregunta.php`
     const RESPONSE = await fetch(URL, {
@@ -268,8 +269,9 @@ async function eliminarPregunta(idPregunta) {
         },
         body: JSON.stringify(idPreg)
     })
-    console.log(RESPONSE)
-    // return RESPONSE
+
+    const actualizaData = await getData()
+    cargarPreguntas(actualizaData)
 }
 
 async function insertarPregunta() { // posiblemente quitar el estilo visible
@@ -326,11 +328,13 @@ async function insertarPregunta() { // posiblemente quitar el estilo visible
         })
 
         const jsonData = JSON.stringify(formObject)
-        console.log(jsonData)
+        // console.log(jsonData)
 
-        sendData(jsonData)
+        await sendDataInsert(jsonData)
 
-        // preguntarle al Alvaro como refrescar la página
+        const actualizaData = await getData()
+        cargarPreguntas(actualizaData)
+
         MOSTRAPREGUNTES.classList.remove("oculto")
         INSERTAR.classList.add("oculto")
     })
@@ -339,6 +343,5 @@ async function insertarPregunta() { // posiblemente quitar el estilo visible
     INSERTAR.appendChild(divInsertar)
     console.log(INSERTAR)
 }
-
 
 mostrarBBDD()
