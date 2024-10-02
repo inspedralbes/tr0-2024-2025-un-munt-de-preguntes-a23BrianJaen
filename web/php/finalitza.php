@@ -35,5 +35,4 @@ foreach (getData() as $index["idPreg"] => $idRespuesta) {
 $response = $respostes;
 
 echo json_encode($response);
-
 ?>

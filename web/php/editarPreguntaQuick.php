@@ -17,7 +17,7 @@ function updatePreguntasQuick($data, $conn)
 
 function updateRespostasQuick($data, $conn)
 {
-
+    // Crear un array para las respuestas
     $respostes = [
         $data['idResp1'],
         $data['idResp2'],
@@ -25,6 +25,7 @@ function updateRespostasQuick($data, $conn)
         $data['idResp4']
     ];
 
+    // Crear un array para los ids de las respuestas
     $idsRespostes = [
         $data['idResposta1'],
         $data['idResposta2'],
@@ -32,6 +33,7 @@ function updateRespostasQuick($data, $conn)
         $data['idResposta4'],
     ];
 
+    // Crear un array para las respuestas correctas
     $respostesCorrectes = [
         $data['idRespCorr1'],
         $data['idRespCorr2'],
@@ -39,24 +41,19 @@ function updateRespostasQuick($data, $conn)
         $data['idRespCorr4']
     ];
 
-    $idRespCorr = $data['idRespCorr'];
-
     $idPreg = $data['idPregunta'];
 
     foreach ($respostes as $index => $resposta) {
-        if($respostesCorrectes != null){
-            $esCorrecte = (isset($respostesCorrectes[$index]) && $respostesCorrectes[$index] === "1") ? 1 : 0;
+        // Comprobar si el índice es válido para respuestas correctas
+        $esCorrecte = (isset($respostesCorrectes[$index]) && $respostesCorrectes[$index] === "1") ? 1 : 0;
 
-        } else {
-
-            $esCorrecte = ($index + 1 == $idRespCorr) ? 1 : 0;
-        }
-
+        // SQL para actualizar las respuestas
         $sql = "UPDATE respostes SET resposta = ?, respostaCorrecta = ? WHERE idResposta = ? AND idPreg = ?";
         $stmt = $conn->prepare($sql);
 
-        $idResposta = $idsRespostes[$index]; // Accedo a cada idResposta mediante la iteracion
+        $idResposta = $idsRespostes[$index]; // Accede a cada idResposta mediante la iteración
 
+        // Asignar los valores
         $stmt->bind_param("siii", $resposta, $esCorrecte, $idResposta, $idPreg);
         $stmt->execute();
     }

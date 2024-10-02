@@ -1,7 +1,127 @@
+/* General reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Centrado vertical y horizontal en el body */
+html, body {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #1f1f1f; /* Fondo negro suave */
+    color: #f5f5f5; /* Texto claro */
+}
+
+/* Contenedor principal de la aplicación */
+#app {
+    text-align: center;
+    background-color: #2e2e2e; /* Gris oscuro */
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Visibilidad */
 .oculto {
     display: none;
 }
 
-.visible{
+.visible {
     display: block;
+}
+
+/* Estilos para las preguntas */
+.pregunta {
+    margin-bottom: 20px; /* Espacio entre preguntas */
+}
+
+/* Botones de navegación */
+.nav-buttons {
+    display: flex;
+    justify-content: center; /* Centrar botones de navegación */
+    margin-top: 10px; /* Espacio encima de los botones */
+}
+
+/* Estilos generales para botones */
+button {
+    display: inline-block;
+    background-color: #4b0082; /* Azul oscuro */
+    color: #fff;
+    border: none;
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 10px 20px;
+    margin: 5px; /* Espacio entre botones */
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover para los botones */
+button:hover {
+    background-color: #6a0dad; /* Morado más claro */
+}
+
+button:active {
+    background-color: #370b53; /* Morado más oscuro al hacer clic */
+}
+
+/* Estilos para inputs y selects */
+input[type="text"],
+select {
+    padding: 10px;
+    width: 80%;
+    margin: 20px auto;
+    display: block;
+    border-radius: 8px;
+    border: 1px solid #6a0dad;
+    background-color: #3c3c3c; /* Fondo gris suave */
+    color: #fff;
+}
+
+/* Estilos para textos */
+h2,
+h3,
+p {
+    margin: 20px 0;
+}
+
+/* Estilos para selects */
+select, 
+option {
+    background-color: #2e2e2e;
+    color: #fff;
+}
+
+/* Estilos para enlaces */
+a {
+    color: #4b0082; /* Color del enlace */
+    text-decoration: none; /* Sin subrayado */
+    font-size: 1.2rem; /* Tamaño del texto */
+    transition: color 0.3s ease; /* Transición para el color */
+}
+
+a:hover {
+    color: #6a0dad; /* Color del enlace al pasar el cursor */
+}
+
+/* Botón para finalizar el cuestionario */
+#enviaRespostes,
+#nouJoc {
+    background-color: #333;
+}
+
+#enviaRespostes:hover,
+#nouJoc:hover {
+    background-color: #555; /* Color al pasar el cursor */
+}
+
+/* Animaciones opcionales para una transición suave */
+button, 
+input[type="text"], 
+select {
+    transition: all 0.3s ease;
 }

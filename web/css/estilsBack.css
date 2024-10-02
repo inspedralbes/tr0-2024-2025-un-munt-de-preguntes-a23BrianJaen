@@ -76,6 +76,20 @@ button {
     margin-right: 10px; /* Separación entre botones */
 }
 
+a {
+    color: #fff;
+}
+
+.sticky-button {
+    position: sticky; /* Hace que el elemento se quede en la parte superior */
+    top: 0; 
+    z-index: 1000;
+}
+.sticky-button-volver {
+    position: sticky; /* Permite que el contenedor sea sticky */
+    bottom: 0; /* Posiciona en la parte inferior */
+}
+
 button:last-child {
     margin-right: 0; /* Elimina el margen en el último botón */
 }

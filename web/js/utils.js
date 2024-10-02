@@ -1,9 +1,5 @@
-
 const APP = document.getElementById("app")
-const ENVIARRESPOSTES = document.getElementById("enviaRespostes")
-const NOUJOC = document.getElementById("nouJoc")
-const ANTERIOR = document.getElementById("anterior")
-const SEGUENT = document.getElementById("seguent")
+const PLAYER = document.getElementById("playerName")
 let indexPreg = 0
 let estatPartida = null
 
@@ -38,15 +34,14 @@ async function sendData(estatPartida) {
 }
 
 async function endQuiz() {
-        const URL = `./php/generarNouJoc.php`
-        const RESPUESTAS = await fetch(URL, {
+        const URL = `./php/logout.php`
+        const RESPONSE = await fetch(URL, {
                 method: "POST",
                 headers: {
                         "Content-Type": "application/json"
                 },
         })
-        window.location.href = "../web/"
-        return RESPUESTAS
+        return RESPONSE
 }
 
 async function inicializarApp() {
@@ -56,29 +51,10 @@ async function inicializarApp() {
 
         data = await getData(CANTPREG)
         estatPartida = crearEstatPartida(data.length)
+        APP.innerHTML = ''
+        APP.classList.remove("oculto")
         cargarPreguntas(data)
 
-        APP.classList.add("visible")
-        NOUJOC.classList.add("visible")
-        ENVIARRESPOSTES.classList.add("visible")
-        ANTERIOR.classList.add("visible")
-        SEGUENT.classList.add("visible")
-
-        ANTERIOR.addEventListener("click", () => {
-                if (indexPreg > 0) {
-                        indexPreg--
-                        mostrarPreguntaActual()
-                }
-        })
-        SEGUENT.addEventListener("click", () => {
-                if (indexPreg < data.length) {
-                        indexPreg++
-                        if (indexPreg >= data.length) {
-                                mostrarResultadoFinal(estatPartida)
-                        }
-                        mostrarPreguntaActual()
-                }
-        })
 }
 
 function mostrarPreguntaActual() {
@@ -91,26 +67,41 @@ function mostrarPreguntaActual() {
                 } else {
                         pregunta.classList.add("oculto")
                         pregunta.classList.remove("visible")
-
                 }
         }
 }
 
-function mostrarResultadoFinal(estatPartida) { // arreglar lo de abajo para inyectarlo desde el js
-        APP.innerHTML += `<h3>Enhorabona, has acabat el qüestionari.</h3>
-        <p>Pots tornar enrere si vols repondre de nou abans d'envia les respostes.</p>`
-        ENVIARRESPOSTES.style.visibility = "visible"
-        ENVIARRESPOSTES.addEventListener("click", async () => {
+function mostrarResultadoFinal(estatPartida, data) { 
+        APP.classList.add("oculto")
+
+
+        const finalizarQuiz = document.getElementById("finalizarQuiz")
+        finalizarQuiz.innerHTML = ''
+
+        finalizarQuiz.classList.remove("oculto")
+
+        const divMostrarResulFinal = document.createElement("div")
+
+        const enhorabuena = document.createElement("h3")
+        enhorabuena.textContent = "Enhorabona, has acabat el qüestionari."
+
+        divMostrarResulFinal.appendChild(enhorabuena)
+
+        finalizarQuiz.appendChild(divMostrarResulFinal)
+
+        const btnEnviarespostes = document.createElement("button")
+        btnEnviarespostes.textContent = 'Enviar respostes'
+        btnEnviarespostes.addEventListener("click", async () => {
                 try {
                         const RESUL = await sendData(estatPartida)
-                        pintarResultatFinal(RESUL)
+                        pintarResultatFinal(RESUL, data, finalizarQuiz)
                 } catch (error) {
                         console.error('Error al enviar los datos:', error)
                 }
         })
-        NOUJOC.addEventListener("click", async () => {
-                endQuiz()
-        })
+
+        finalizarQuiz.appendChild(btnEnviarespostes)
+
 }
 
 async function cargarPreguntas(data) {
@@ -118,14 +109,17 @@ async function cargarPreguntas(data) {
         for (const [index, pregunta] of data.entries()) {
                 const divPregunta = document.createElement("div")
                 divPregunta.classList.add("pregunta")
+
                 if (indexPreg === index) {
                         divPregunta.classList.add("visible")
                 } else {
                         divPregunta.classList.add("oculto")
                 }
+
                 const titulo = document.createElement("p")
                 titulo.textContent = `${index + 1}- ${pregunta.pregunta}`
                 divPregunta.appendChild(titulo)
+
                 for (const resposta of pregunta.respostes) {
                         const divRespostes = document.createElement("div")
                         const respostaBoton = document.createElement("button")
@@ -138,25 +132,87 @@ async function cargarPreguntas(data) {
                 }
                 APP.appendChild(divPregunta)
         }
+
+        indexPreg = 0
+        const btnAnterior = document.createElement("button")
+        btnAnterior.textContent = "Anterior"
+        btnAnterior.addEventListener("click", () => {
+                if (indexPreg > 0) {
+                        indexPreg--
+                        mostrarPreguntaActual()
+                }
+        })
+        APP.appendChild(btnAnterior)
+
+        const btnSiguiente = document.createElement("button")
+        btnSiguiente.textContent = "Següent"
+        btnSiguiente.addEventListener("click", () => {
+                if (indexPreg < data.length) {
+                        indexPreg++
+                        if (indexPreg >= data.length) {
+                                mostrarResultadoFinal(estatPartida, data, APP)
+                        }
+                        mostrarPreguntaActual()
+                }
+        })
+        APP.appendChild(btnSiguiente)
+}
+
+function pintarResultatFinal(resultat, data, finalizarQuiz) {
+
+        finalizarQuiz.classList.add("oculto")
+
+        const mostrarResultadoFinal = document.getElementById("mostrarResultadoFinal")
+
+        if (resultat.respCorr == undefined) {
+                resultat.respCrr = 0
+        }
+
+        const divResulFinal = document.createElement("div")
+        const titulo = document.createElement("h2")
+
+        titulo.textContent = 'Resultat final'
+
+        const pResultat = document.createElement("p")
+        pResultat.textContent = `Preguntes correctes ${resultat.respCorr}/${resultat.totalPreg}`
+
+        const btnNouJoc = document.createElement("button")
+        btnNouJoc.textContent = 'Tornar a jogar'
+        btnNouJoc.addEventListener("click", async () => {
+                endQuiz()
+                cargarPreguntas(data)
+                introducirNombreParaJugar()
+                mostrarResultadoFinal.classList.add("oculto")
+                PLAYER.classList.remove("oculto")
+                mostrarResultadoFinal.innerHTML = ''
+        })
+        
+        divResulFinal.appendChild(titulo)
+        divResulFinal.appendChild(pResultat)
+        divResulFinal.appendChild(btnNouJoc)
+        mostrarResultadoFinal.appendChild(divResulFinal)
+        mostrarResultadoFinal.classList.remove("oculto")
 }
 
 function introducirNombreParaJugar() {
-        const PLAYER = document.getElementById("playerName")
+        APP.classList.add("oculto")
+        PLAYER.innerHTML = ''
 
         if (PLAYER) {
-                APP.classList.add("oculto")
-                NOUJOC.classList.add("oculto")
-                ENVIARRESPOSTES.classList.add("oculto")
-                ANTERIOR.classList.add("oculto")
-                SEGUENT.classList.add("oculto")
+                const pLink = document.createElement("p")
+                pLink.textContent = 'Panell Administrador'
+                const link = document.createElement("a")
+                link.href = './backPanel.html'
+                link.appendChild(pLink)
+                PLAYER.appendChild(link)
 
-                // obtengo los nombres guardados en el localStorage
                 const nombresGuardados = JSON.parse(localStorage.getItem("nombresUsuarios")) || []
-                mostrarSeleccionNombre(nombresGuardados, PLAYER)
+                mostrarSeleccionNombre(nombresGuardados, PLAYER, link)
         }
+
 }
 
-function mostrarSeleccionNombre(nombresGuardados, PLAYER) {
+function mostrarSeleccionNombre(nombresGuardados, PLAYER, link) {
         const divPlayer = document.createElement("div")
 
         // Crear un desplegable para seleccionar un nombre para jugar
@@ -178,7 +234,8 @@ function mostrarSeleccionNombre(nombresGuardados, PLAYER) {
                 buttonJugar.textContent = "Seleccionar y jugar"
                 buttonJugar.addEventListener("click", () => {
                         const nombreSeleccionado = select.value
-                        iniciarJuego(nombreSeleccionado, divPlayer)
+                        link.classList.add("oculto")
+                        iniciarJuego(nombreSeleccionado, PLAYER)
                 })
 
                 divPlayer.appendChild(buttonJugar)
@@ -204,7 +261,6 @@ function mostrarSeleccionNombre(nombresGuardados, PLAYER) {
                         const nombreAEliminar = selectEliminar.value
                         if (nombreAEliminar) {
                                 eliminarNombre(nombreAEliminar)
-                                location.reload()
                         } else {
                                 alert("Selecciona un nombre para eliminar.")
                         }
@@ -237,7 +293,6 @@ function mostrarSeleccionNombre(nombresGuardados, PLAYER) {
                                 nombresGuardados.push(nombre)
                                 localStorage.setItem("nombresUsuarios", JSON.stringify(nombresGuardados)) // Guardar en localStorage
                                 console.log(`Nombre guardado: ${nombre}`)
-                                location.reload()
                         } else {
                                 alert("El nom ja està guardat. Prova amb un altre.")
                         }
@@ -255,51 +310,25 @@ function mostrarSeleccionNombre(nombresGuardados, PLAYER) {
 }
 
 function eliminarNombre(nombre) {
-        location.reload()
-        // Obtengo los nombres guardados en el localStorage o en un array vacio si no existe
         const nombresGuardados = JSON.parse(localStorage.getItem("nombresUsuarios")) || []
-        
-        // Array para los nombres que no se van a eliminar
+
         const nuevosNombres = []
-    
+
         for (let i = 0; i < nombresGuardados.length; i++) {
-            // Verifico si el nombre actual es el que quiero eliminar
-            if (nombresGuardados[i] !== nombre) {
-                // Si no es el nombre a eliminar, me lo guardo
-                nuevosNombres.push(nombresGuardados[i])
-            }
+                if (nombresGuardados[i] !== nombre) {
+                        nuevosNombres.push(nombresGuardados[i]) // si no es el nombre a eliminar me lo guardo
+                }
         }
-    
+
         localStorage.setItem("nombresUsuarios", JSON.stringify(nuevosNombres));
         console.log(`Nombre eliminado: ${nombre}`)
-    }
-    
+}
 
 // Función para iniciar el juego con el nombre seleccionado
-function iniciarJuego(nombreJugador, divPlayer) { // decirle al Alvaro el motivo por que recargo la pagina
+function iniciarJuego(nombreJugador, PLAYER) {
         console.log(`El jugador ${nombreJugador} está listo para jugar.`);
         inicializarApp()
-        divPlayer.classList.add("oculto")
+        PLAYER.classList.add("oculto")
 }
-
-function pintarResultatFinal(resultat) {
-
-        APP.innerHTML = ``
-
-        ENVIARRESPOSTES.style.display = "none"
-        ANTERIOR.style.display = "none"
-        SEGUENT.style.display = "none"
-
-        if (resultat.respCorr == undefined) {
-                resultat.respCrr = 0
-        }
-        APP.innerHTML += `<h2>Resultat final</h2>
-        Preguntes correctes ${resultat.respCorr}/${resultat.totalPreg}`
-        NOUJOC.style.display = "block"
-
-        // console.log(resultat.respCorr)
-        // console.log(resultat.totalPreg)
-}
-
 
 introducirNombreParaJugar()

@@ -12,8 +12,6 @@ El projecte s'ha de poder desplegar en mode desenvolupament simplement fent dock
 # Aquest fitxer ha de contenir com a mínim:
  * Brian Jaén Medina
  * Un món de preguntes
- * Petita descripció
- * Adreça del gestor de tasques (taiga, jira, trello...)
- * Adreça del prototip gràfic del projecte (Penpot, figma, moqups...)
- * URL de producció (quan la tingueu)
- * Estat: (explicació d'en quin punt està)
+ * Quiz de deu preguntes en un temps limit
+ * [URL] (http://a23brijaemed.daw.inspedralbes.cat/tr0-2024-2025-un-munt-de-preguntes-a23BrianJaen/web/)
+ * Estat: acabada
