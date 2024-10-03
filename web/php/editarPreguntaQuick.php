@@ -41,13 +41,14 @@ function updateRespostasQuick($data, $conn)
         $data['idRespCorr4']
     ];
 
+
     $idPreg = $data['idPregunta'];
 
     foreach ($respostes as $index => $resposta) {
         // Comprobar si el índice es válido para respuestas correctas
-        $esCorrecte = (isset($respostesCorrectes[$index]) && $respostesCorrectes[$index] === "1") ? 1 : 0;
+        $esCorrecte = ($respostesCorrectes[$index] === "1") ? 1 : 0;
+        error_log('Resposta correcta '. $esCorrecte);
 
-        // SQL para actualizar las respuestas
         $sql = "UPDATE respostes SET resposta = ?, respostaCorrecta = ? WHERE idResposta = ? AND idPreg = ?";
         $stmt = $conn->prepare($sql);
 

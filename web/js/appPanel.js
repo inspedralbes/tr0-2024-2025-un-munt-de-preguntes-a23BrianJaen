@@ -129,8 +129,8 @@ async function cargarPreguntas(data) {
             respCorr = pregunta.respostes[indexResp].respostaCorrecta == 1 ? "true" : "false"
 
             const respostaCorr = document.createElement("li")
-            respostaCorr.id = `respostaCorr_${index}_${indexResp}`
             respostaCorr.textContent = respCorr
+            respostaCorr.id = `respostaCorr_${index}_${indexResp}`
             idRespCorrEditQuick[indexResp] = respostaCorr.id
 
             listaRespostesCorrectes.appendChild(respostaCorr)
@@ -244,61 +244,49 @@ async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, id
         respuestasInputs.push(INPUTRESPOSTES)
         respuestasIds.push(pregunta.respostes[i].idResposta)
 
-        // Input para indicar si la respuesta es correcta o incorrecta
         const thQuickEditRespCorr = idRespCorrEditQuick[i]
         thQuickEditRespCorr.innerHTML = ""
 
+        const idInputRespCorr = `inputResposta_${pregunta.idPregunta}_${i}`
+
         const INPUTRESPOTESCORRECTES = document.createElement("input")
+        INPUTRESPOTESCORRECTES.id = `inputResposta_${pregunta.idPregunta}_${i}`
         INPUTRESPOTESCORRECTES.type = "text"
+        INPUTRESPOTESCORRECTES.name = `respuesta_${pregunta.idPregunta}`
         INPUTRESPOTESCORRECTES.size = pregunta.respostes[i].respostaCorrecta.length
         INPUTRESPOTESCORRECTES.value = pregunta.respostes[i].respostaCorrecta
-        
+
+        document.body.appendChild(INPUTRESPOTESCORRECTES)
+
+        const inputCorrecte = document.getElementById(idInputRespCorr).value
         thQuickEditRespCorr.appendChild(INPUTRESPOTESCORRECTES)
-        
-        console.log(INPUTRESPOTESCORRECTES.value)
-        respuestasCorrectas.push(INPUTRESPOTESCORRECTES.value) // me guardo si la respuesta es correcta y aqui la comparo
+        respuestasCorrectas.push(inputCorrecte)
+
     }
-    // console.log(respuestasCorrectas)
 
     // Botón para guardar los cambios
     const btnGuardarResul = document.createElement("button")
     btnGuardarResul.textContent = "Guardar cambios"
     btnGuardarResul.addEventListener("click", async () => {
-        // Crear el objeto con la estructura que necesitas
         
         const datosActualizados = {
-            idPregunta: pregunta.idPregunta, // ID de la pregunta
-            idResp1: respuestasInputs[0].value, // Valor actualizado de la respuesta 1
-            idResp2: respuestasInputs[1].value, // Valor actualizado de la respuesta 2
-            idResp3: respuestasInputs[2].value, // Valor actualizado de la respuesta 3
-            idResp4: respuestasInputs[3].value, // Valor actualizado de la respuesta 4
-            idRespCorr1: respuestasCorrectas[0], // Si la respuesta 1 es correcta
-            idRespCorr2: respuestasCorrectas[1], // Si la respuesta 2 es correcta
-            idRespCorr3: respuestasCorrectas[2], // Si la respuesta 3 es correcta
-            idRespCorr4: respuestasCorrectas[3],  // Si la respuesta 4 es correcta
-            idResposta1: respuestasIds[0], // ID de la respuesta 1
-            idResposta2: respuestasIds[1], // ID de la respuesta 2
-            idResposta3: respuestasIds[2], // ID de la respuesta 3
-            idResposta4: respuestasIds[3], // ID de la respuesta 4
-            pregunta: INPUTPREGUNTA.value // Valor actualizado de la pregunta
+            idPregunta: pregunta.idPregunta,
+            pregunta: INPUTPREGUNTA.value
         }
 
         
-        // const datosActualizados = {
-        //     idRespCorr1: respuestasCorrectas[0], // Si la respuesta 1 es correcta
-        //     idRespCorr2: respuestasCorrectas[1], // Si la respuesta 2 es correcta
-        //     idRespCorr3: respuestasCorrectas[2], // Si la respuesta 3 es correcta
-        //     idRespCorr4: respuestasCorrectas[3],  // Si la respuesta 4 es correcta
-        // }
-        console.log(datosActualizados)
+        for (let i = 0; i < pregunta.respostes.length; i++) { // recorro la cantidad de respuestas
+            respuestasCorrectas[i] = document.getElementById(`inputResposta_${pregunta.idPregunta}_${i}`).value
 
-        // Convertir el objeto en JSON
+            datosActualizados[`idResp${i + 1}`] = respuestasInputs[i].value
+            datosActualizados[`idRespCorr${i + 1}`] = respuestasCorrectas[i]
+            datosActualizados[`idResposta${i + 1}`] = respuestasIds[i]
+        }
+
         const jsonData = JSON.stringify(datosActualizados)
-        
-        // Enviar los datos a la función de actualización
-        await sendDataUpdate(jsonData)
-        
-        // Actualizar los datos en la página
+
+        await sendDataUpdateQuick(jsonData)
+
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
     })

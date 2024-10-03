@@ -32,25 +32,12 @@ function updateRespostasQuick($data, $conn)
         $data['idResposta4'],
     ];
 
-    $respostesCorrectes = [
-        $data['idRespCorr1'],
-        $data['idRespCorr2'],
-        $data['idRespCorr3'],
-        $data['idRespCorr4']
-    ];
-
     $idRespCorr = $data['idRespCorr'];
 
     $idPreg = $data['idPregunta'];
 
     foreach ($respostes as $index => $resposta) {
-        if($respostesCorrectes != null){
-            $esCorrecte = (isset($respostesCorrectes[$index]) && $respostesCorrectes[$index] === "1") ? 1 : 0;
-
-        } else {
-
-            $esCorrecte = ($index + 1 == $idRespCorr) ? 1 : 0;
-        }
+        $esCorrecte = ($index + 1 == $idRespCorr) ? 1 : 0;
 
         $sql = "UPDATE respostes SET resposta = ?, respostaCorrecta = ? WHERE idResposta = ? AND idPreg = ?";
         $stmt = $conn->prepare($sql);
