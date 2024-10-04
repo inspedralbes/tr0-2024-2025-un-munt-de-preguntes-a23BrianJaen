@@ -1,5 +1,6 @@
 const APP = document.getElementById("app")
 const PLAYER = document.getElementById("playerName")
+const contadorJuego = document.getElementById("contador")
 let indexPreg = 0
 let estatPartida = null
 
@@ -22,15 +23,26 @@ async function getData(CANTPREG) {
 }
 
 async function sendData(estatPartida) {
-        const URL = `./php/finalitza.php`
-        const RESPUESTAS = await fetch(URL, {
-                method: "POST",
-                headers: {
-                        "Content-Type": "application/json"
-                },
-                body: JSON.stringify(estatPartida.preguntes)
-        })
-        return RESPUESTAS.json()
+
+        const URL = './php/finalitza.php'
+        try {
+                const response = await fetch(URL, {
+                        method: "POST",
+                        headers: {
+                                "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(estatPartida)
+                });
+
+                if (!response.ok) {
+                        throw new Error(`Error al realizar el fetch: ${response.statusText}`)
+                }
+
+                const result = await response.json()
+                return result
+        } catch (error) {
+                console.error("Error al enviar los datos:", error)
+        }
 }
 
 async function endQuiz() {
@@ -46,7 +58,7 @@ async function endQuiz() {
 
 async function inicializarApp() {
 
-        const CANTPREG = 4
+        const CANTPREG = localStorage.getItem("cantPreg")
         let data = []
 
         data = await getData(CANTPREG)
@@ -54,7 +66,6 @@ async function inicializarApp() {
         APP.innerHTML = ''
         APP.classList.remove("oculto")
         cargarPreguntas(data)
-
 }
 
 function mostrarPreguntaActual() {
@@ -71,9 +82,8 @@ function mostrarPreguntaActual() {
         }
 }
 
-function mostrarResultadoFinal(estatPartida, data) { 
+function mostrarResultadoFinal(estatPartida, data) {
         APP.classList.add("oculto")
-
 
         const finalizarQuiz = document.getElementById("finalizarQuiz")
         finalizarQuiz.innerHTML = ''
@@ -106,30 +116,40 @@ function mostrarResultadoFinal(estatPartida, data) {
 
 async function cargarPreguntas(data) {
 
-        for (const [index, pregunta] of data.entries()) {
+        for (const [indexPregunta, pregunta] of data.entries()) {
                 const divPregunta = document.createElement("div")
                 divPregunta.classList.add("pregunta")
 
-                if (indexPreg === index) {
+                if (indexPreg === indexPregunta) {
                         divPregunta.classList.add("visible")
                 } else {
                         divPregunta.classList.add("oculto")
                 }
 
                 const titulo = document.createElement("p")
-                titulo.textContent = `${index + 1}- ${pregunta.pregunta}`
+                titulo.textContent = `${indexPregunta + 1}- ${pregunta.pregunta}`
                 divPregunta.appendChild(titulo)
+                for (const [indexResp, resposta] of pregunta.respostes.entries()) {
+                        const divRespostes = document.createElement("div");
+                        const respostaBoton = document.createElement("button");
 
-                for (const resposta of pregunta.respostes) {
-                        const divRespostes = document.createElement("div")
-                        const respostaBoton = document.createElement("button")
+                        respostaBoton.textContent = resposta.resposta;
+
                         respostaBoton.addEventListener("click", () => {
-                                estatPartida.preguntes[index].resposta = resposta.indexResposta
+                                // Cambiao el color de fondo de todos los botones dentro del divRespostes
+                                const botones = divRespostes.parentNode.querySelectorAll("button"); // Selecciona todos los botones en el mismo contenedor
+                                botones.forEach(boton => {
+                                        boton.classList.remove("button-pulsado")
+                                })
+                                respostaBoton.classList.add("button-pulsado")
+
+                                estatPartida.preguntes[indexPregunta].resposta = resposta.indexResposta
                         })
-                        respostaBoton.textContent = resposta.resposta
+
                         divRespostes.appendChild(respostaBoton)
                         divPregunta.appendChild(divRespostes)
                 }
+
                 APP.appendChild(divPregunta)
         }
 
@@ -177,7 +197,7 @@ function pintarResultatFinal(resultat, data, finalizarQuiz) {
         pResultat.textContent = `Preguntes correctes ${resultat.respCorr}/${resultat.totalPreg}`
 
         const btnNouJoc = document.createElement("button")
-        btnNouJoc.textContent = 'Tornar a jogar'
+        btnNouJoc.textContent = 'Tornar a jugar'
         btnNouJoc.addEventListener("click", async () => {
                 endQuiz()
                 cargarPreguntas(data)
@@ -186,7 +206,7 @@ function pintarResultatFinal(resultat, data, finalizarQuiz) {
                 PLAYER.classList.remove("oculto")
                 mostrarResultadoFinal.innerHTML = ''
         })
-        
+
         divResulFinal.appendChild(titulo)
         divResulFinal.appendChild(pResultat)
         divResulFinal.appendChild(btnNouJoc)
@@ -264,6 +284,7 @@ function mostrarSeleccionNombre(nombresGuardados, PLAYER, link) {
                         } else {
                                 alert("Selecciona un nombre para eliminar.")
                         }
+                        location.reload()
                 })
 
                 divPlayer.appendChild(buttonEliminar)
@@ -293,6 +314,7 @@ function mostrarSeleccionNombre(nombresGuardados, PLAYER, link) {
                                 nombresGuardados.push(nombre)
                                 localStorage.setItem("nombresUsuarios", JSON.stringify(nombresGuardados)) // Guardar en localStorage
                                 console.log(`Nombre guardado: ${nombre}`)
+                                location.reload()
                         } else {
                                 alert("El nom ja està guardat. Prova amb un altre.")
                         }
@@ -301,12 +323,28 @@ function mostrarSeleccionNombre(nombresGuardados, PLAYER, link) {
                 }
         })
 
+        const LABELpreguntes = document.createElement("label")
+        LABELpreguntes.textContent = `Escriu la quantita de preguntes:`
+
+        const inputCantPreg = document.createElement("input")
+        inputCantPreg.type = "text"
+        inputCantPreg.id = "cantPreguntes"
+
+        const btnCantPreg = document.createElement("button")
+        btnCantPreg.textContent = "Selecciona quantiat"
+        btnCantPreg.addEventListener("click", () => {
+                const cantitaPreguntes = document.getElementById("cantPreguntes").value;
+                localStorage.setItem("cantPreg", cantitaPreguntes)
+        })
+
         divPlayer.appendChild(LABEL)
         divPlayer.appendChild(INPUT)
         divPlayer.appendChild(BUTTON)
+        divPlayer.appendChild(LABELpreguntes)
+        divPlayer.appendChild(inputCantPreg)
+        divPlayer.appendChild(btnCantPreg)
 
         PLAYER.appendChild(divPlayer)
-        console.log(PLAYER)
 }
 
 function eliminarNombre(nombre) {
@@ -319,7 +357,7 @@ function eliminarNombre(nombre) {
                         nuevosNombres.push(nombresGuardados[i]) // si no es el nombre a eliminar me lo guardo
                 }
         }
-
+        location.reload()
         localStorage.setItem("nombresUsuarios", JSON.stringify(nuevosNombres));
         console.log(`Nombre eliminado: ${nombre}`)
 }

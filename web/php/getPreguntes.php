@@ -31,10 +31,8 @@ function prepareData()
         }
         $_SESSION["respuestas"] = $preguntesArray;
     }
-
-    // eliminar tambien el campo de 'respostaCorrecta' para que no se vea en el front
     
-    foreach ($_SESSION["questions"] as &$pregunta) { // & <- es importante por que las modificaciones que se hagan afectan a los elementos originales del array
+    foreach ($_SESSION["questions"] as &$pregunta) { 
         unset($pregunta['indexRespostaCorrecta']);
     }
 

@@ -112,21 +112,30 @@ async function cargarPreguntas(data) {
         const celdaRespostesCorrectes = document.createElement("td")
         const listaRespostesCorrectes = document.createElement("ul")
 
-        let respCorr = false
+        // let respCorr = false
 
         let idRespEditQuick = []
         let idRespCorrEditQuick = []
 
         // Añadir las respuestas y las respuestas correctas
-        for (const [indexResp, resposta] of pregunta.respostes.entries()) {
+        for (const [indexResp, resposta] of (pregunta.respostes || []).entries()) {
+            // Asegurar que 'resposta' es un objeto válido
+            if (!resposta || typeof resposta !== 'object') {
+                console.error(`Error: 'resposta' no es un objeto válido en la pregunta con id: ${pregunta.idPregunta}`)
+                continue
+            }
+
             const itemResposta = document.createElement("li")
-            itemResposta.textContent = resposta.resposta
+            itemResposta.textContent = resposta.resposta || 'Respuesta no disponible'
             itemResposta.id = `resposta_${index}_${indexResp}`
             idRespEditQuick[indexResp] = itemResposta.id
-            itemResposta.textContent += ` ${resposta.idResposta} 🢘 ID`
+
+            // Mostrar el ID de la respuesta en el texto
+            itemResposta.textContent += ` ${resposta.idResposta || 'ID no disponible'} 🢘 ID`
             listaRespostes.appendChild(itemResposta)
 
-            respCorr = pregunta.respostes[indexResp].respostaCorrecta == 1 ? "true" : "false"
+            // Comprobar si la respuesta es correcta
+            const respCorr = resposta.respostaCorrecta == 1 ? "true" : "false"
 
             const respostaCorr = document.createElement("li")
             respostaCorr.textContent = respCorr
@@ -135,6 +144,7 @@ async function cargarPreguntas(data) {
 
             listaRespostesCorrectes.appendChild(respostaCorr)
         }
+
 
         celdaRespostes.appendChild(listaRespostes)
 
@@ -182,7 +192,7 @@ async function cargarPreguntas(data) {
             }
 
             console.log(`Editant la pregunta de manera ràpida: ${pregunta.idPregunta} - ${pregunta.pregunta}`)
-            editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, idRespCorrEditQuick, botoQuickEdit, celdaAccions)
+            editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, idRespCorrEditQuick, botoQuickEdit, celdaAccions, botoEdit, botoEliminar)
         })
         celdaAccions.appendChild(botoQuickEdit)
         filaPregunta.appendChild(celdaAccions)
@@ -213,8 +223,10 @@ async function cargarPreguntas(data) {
     console.log(MOSTRAPREGUNTES)
 }
 
-async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, idRespCorrEditQuick, botoQuickEdit, celdaAccions) {
+async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, idRespCorrEditQuick, botoQuickEdit, celdaAccions, botoEdit, botoEliminar) {
     botoQuickEdit.classList.add("oculto")
+    botoEdit.classList.add("oculto")
+    botoEliminar.classList.add("oculto")
 
     thQuickEditPreg.innerHTML = ""
     const INPUTPREGUNTA = document.createElement("input")
@@ -228,53 +240,47 @@ async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, id
     const respuestasIds = []
     const respuestasCorrectas = []
 
-    // Recorrer todas las respuestas
     for (let i = 0; i < pregunta.respostes.length; i++) {
         const thQuickEditResp = idRespEditQuick[i]
         thQuickEditResp.innerHTML = ""
-
+    
         // Input para el texto de la respuesta
         const INPUTRESPOSTES = document.createElement("input")
         INPUTRESPOSTES.type = "text"
         INPUTRESPOSTES.size = pregunta.respostes[i].resposta.length
         INPUTRESPOSTES.value = pregunta.respostes[i].resposta
         thQuickEditResp.appendChild(INPUTRESPOSTES)
-
+    
         // Guardar inputs de respuestas y sus IDs
         respuestasInputs.push(INPUTRESPOSTES)
         respuestasIds.push(pregunta.respostes[i].idResposta)
-
+    
         const thQuickEditRespCorr = idRespCorrEditQuick[i]
         thQuickEditRespCorr.innerHTML = ""
-
-        const idInputRespCorr = `inputResposta_${pregunta.idPregunta}_${i}`
-
+    
         const INPUTRESPOTESCORRECTES = document.createElement("input")
         INPUTRESPOTESCORRECTES.id = `inputResposta_${pregunta.idPregunta}_${i}`
-        INPUTRESPOTESCORRECTES.type = "text"
-        INPUTRESPOTESCORRECTES.name = `respuesta_${pregunta.idPregunta}`
-        INPUTRESPOTESCORRECTES.size = pregunta.respostes[i].respostaCorrecta.length
-        INPUTRESPOTESCORRECTES.value = pregunta.respostes[i].respostaCorrecta
-
-        document.body.appendChild(INPUTRESPOTESCORRECTES)
-
-        const inputCorrecte = document.getElementById(idInputRespCorr).value
+        INPUTRESPOTESCORRECTES.type = "type"
+        INPUTRESPOTESCORRECTES.size = pregunta.respostes[i].respostaCorrecta.length 
+        INPUTRESPOTESCORRECTES.value = pregunta.respostes[i].respostaCorrecta 
+    
         thQuickEditRespCorr.appendChild(INPUTRESPOTESCORRECTES)
-        respuestasCorrectas.push(inputCorrecte)
-
+    
+        INPUTRESPOTESCORRECTES.checked = pregunta.respostes[i].respostaCorrecta == 1
+    
+        respuestasCorrectas.push(INPUTRESPOTESCORRECTES.checked)
     }
+    
 
-    // Botón para guardar los cambios
     const btnGuardarResul = document.createElement("button")
     btnGuardarResul.textContent = "Guardar cambios"
     btnGuardarResul.addEventListener("click", async () => {
-        
+
         const datosActualizados = {
             idPregunta: pregunta.idPregunta,
             pregunta: INPUTPREGUNTA.value
         }
 
-        
         for (let i = 0; i < pregunta.respostes.length; i++) { // recorro la cantidad de respuestas
             respuestasCorrectas[i] = document.getElementById(`inputResposta_${pregunta.idPregunta}_${i}`).value
 
@@ -289,10 +295,25 @@ async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, id
 
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
+
+        alert("S'ha completat solicitud")
     })
 
-    // Añadir el botón a la página
     celdaAccions.appendChild(btnGuardarResul)
+
+    const btnCanelar = document.createElement("button")
+    btnCanelar.type = "button"
+    btnCanelar.textContent = 'Cancela'
+    btnCanelar.addEventListener("click", async () => {
+        alert("S'ha cancelat la solicitud")
+        const actualizaData = await getData()
+        cargarPreguntas(actualizaData)
+        MOSTRAPREGUNTES.classList.remove("oculto")
+        editar.classList.add("oculto")
+    })
+
+    celdaAccions.appendChild(btnCanelar)
+
 }
 
 function editaPregunta(pregunta) {
@@ -361,6 +382,20 @@ function editaPregunta(pregunta) {
     botoSubmit.textContent = "Edita"
     FORMULARIEditar.appendChild(botoSubmit)
 
+    const btnCanelar = document.createElement("button")
+    btnCanelar.type = "button"
+    btnCanelar.textContent = 'Cancela'
+    btnCanelar.addEventListener("click", async () => {
+        console.log("entra")
+        const actualizaData = await getData()
+        cargarPreguntas(actualizaData)
+        alert("S'ha cancelat la solicitud")
+        MOSTRAPREGUNTES.classList.remove("oculto")
+        editar.classList.add("oculto")
+    })
+
+    FORMULARIEditar.appendChild(btnCanelar)
+
     FORMULARIEditar.addEventListener("submit", async (event) => {
         event.preventDefault()
 
@@ -379,7 +414,7 @@ function editaPregunta(pregunta) {
 
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
-
+        alert("S'ha completat la solicitud")
         MOSTRAPREGUNTES.classList.remove("oculto")
         editar.classList.add("oculto")
     })
@@ -402,6 +437,7 @@ async function eliminarPregunta(idPregunta) {
 
     const actualizaData = await getData()
     cargarPreguntas(actualizaData)
+    alert("S'ha completat la solicitud")
 }
 
 async function insertarPregunta() {
@@ -447,6 +483,22 @@ async function insertarPregunta() {
     botoSubmit.textContent = "Inserir"
     FORMULARIINSRT.appendChild(botoSubmit)
 
+
+    const btnCanelar = document.createElement("button")
+    btnCanelar.type = "button"
+    btnCanelar.textContent = 'Cancela'
+    btnCanelar.addEventListener("click", async () => {
+        console.log("entra")
+        const actualizaData = await getData()
+        cargarPreguntas(actualizaData)
+        alert("S'ha cancelat la solicitud")
+
+        MOSTRAPREGUNTES.classList.remove("oculto")
+        INSERTAR.classList.add("oculto")
+    })
+
+    FORMULARIINSRT.appendChild(btnCanelar)
+
     FORMULARIINSRT.addEventListener("submit", async (event) => {
         event.preventDefault()
 
@@ -463,8 +515,10 @@ async function insertarPregunta() {
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
 
+        
         MOSTRAPREGUNTES.classList.remove("oculto")
         INSERTAR.classList.add("oculto")
+        alert("S'ha completat solicitud")
     })
 
     divInsertar.appendChild(FORMULARI)
