@@ -265,7 +265,6 @@ async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, id
         // Establecer el radio como seleccionado si es la respuesta correcta
         INPUTRESPOTESCORRECTES.checked = pregunta.respostes[i].respostaCorrecta == 1
 
-
         // Si el radio está marcado como correcto, actualizar la variable
         if (INPUTRESPOTESCORRECTES.checked) {
             respuestaCorrectaSeleccionada = pregunta.respostes[i].idResposta
@@ -304,8 +303,7 @@ async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, id
 
         await sendDataUpdateQuick(jsonData)
 
-        // alert("S'ha completat la solicitud")
-        completarSolicitud() // AQUI CO
+        completarSolicitud()
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
 
@@ -317,9 +315,8 @@ async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, id
     btnCanelar.type = "button"
     btnCanelar.textContent = 'Cancela'
     btnCanelar.addEventListener("click", async () => {
-        cancelarSolicitud() // AQUI
+        cancelarSolicitud()
 
-        // alert("S'ha cancelat la solicitud")
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
         MOSTRAPREGUNTES.classList.remove("oculto")
@@ -331,8 +328,6 @@ async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, id
 
 
 function editaPregunta(pregunta) {
-
-    // comentarle al Pol que si desabilito el input no hace el editar
 
     MOSTRAPREGUNTES.classList.add("oculto")
 
@@ -354,7 +349,6 @@ function editaPregunta(pregunta) {
     INPUTID.placeholder = "Id pregunta"
     INPUTID.name = "idPregunta"
     INPUTID.value = pregunta.idPregunta
-    // INPUTID.disabled = true
     FORMULARIEditar.appendChild(INPUTID)
 
     const INPUTPREG = document.createElement("input")
@@ -380,7 +374,6 @@ function editaPregunta(pregunta) {
         INPUTIDRESP.type = "text"
         INPUTIDRESP.name = `idResposta${i + 1}`
         INPUTIDRESP.value = pregunta.respostes[i].idResposta
-        // INPUTIDRESP.disabled = true  // Campo solo de lectura
         FORMULARIEditar.appendChild(INPUTIDRESP)
     }
 
@@ -403,8 +396,7 @@ function editaPregunta(pregunta) {
         console.log("entra")
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
-        cancelarSolicitud() // AQUI
-        // alert("S'ha cancelat la solicitud")
+        cancelarSolicitud()
         MOSTRAPREGUNTES.classList.remove("oculto")
         editar.classList.add("oculto")
     })
@@ -422,13 +414,10 @@ function editaPregunta(pregunta) {
         })
 
         const jsonData = JSON.stringify(formObject)
-
         console.log(jsonData)
-
         await sendDataUpdate(jsonData)
 
-        // alert("S'ha completat la solicitud")
-        completarSolicitud() // AQUI CO
+        completarSolicitud() 
 
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
@@ -452,8 +441,7 @@ async function eliminarPregunta(idPregunta) {
         body: JSON.stringify(idPreg)
     })
 
-    completarSolicitud() // AQUI CO
-    // alert("S'ha completat la solicitud")
+    completarSolicitud()
     const actualizaData = await getData()
     cargarPreguntas(actualizaData)
 }
@@ -506,11 +494,9 @@ async function insertarPregunta() {
     btnCanelar.type = "button"
     btnCanelar.textContent = 'Cancela'
     btnCanelar.addEventListener("click", async () => {
-        // console.log("entra")
-        cancelarSolicitud() // AQUI
+        cancelarSolicitud() 
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
-        // alert("S'ha cancelat la solicitud")
 
         MOSTRAPREGUNTES.classList.remove("oculto")
         INSERTAR.classList.add("oculto")
@@ -530,9 +516,8 @@ async function insertarPregunta() {
 
         const jsonData = JSON.stringify(formObject)
         await sendDataInsert(jsonData)
-        
-        completarSolicitud() // AQUI CO
-        // alert("S'ha completat solicitud")
+
+        completarSolicitud()
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
 
@@ -570,6 +555,7 @@ function cancelarSolicitud() {
         }
     });
 }
+
 function completarSolicitud() {
     let timerInterval;
     Swal.fire({
