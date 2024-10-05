@@ -8,7 +8,8 @@ let estatPartida = null
 let data = []
 let temporizador
 
-function crearEstatPartida(cantantidadPreguntes) {
+function crearEstatPartida() {
+        let cantantidadPreguntes = data.length
         let estatPartida = {
                 preguntes: []
         }
@@ -66,10 +67,10 @@ async function inicializarApp() {
         contadorDiv.classList.remove("oculto")
 
         data = await getData(CANTPREG)
-        estatPartida = crearEstatPartida(data.length)
+        estatPartida = crearEstatPartida()
         APP.innerHTML = ''
         APP.classList.remove("oculto")
-        cargarPreguntas(data)
+        cargarPreguntas()
 }
 
 function mostrarPreguntaActual() {
@@ -139,7 +140,8 @@ async function enviarRespuestasAutomaticamente() {
 
         try {
                 const RESUL = await sendData(estatPartida);
-                pintarResultatFinal(RESUL, data, finalizarQuiz);
+                console.log(RESUL)
+                pintarResultatFinal(RESUL, finalizarQuiz);
         } catch (error) {
                 console.error('Error al enviar las respuestas automáticamente:', error);
         }
@@ -159,7 +161,7 @@ function iniciarJuego(nombreJugador) {
 }
 
 // Mostrar la pregunta actual y detener el temporizador si el jugador termina antes
-function mostrarResultadoFinal(estatPartida, data) {
+function mostrarResultadoFinal(estatPartida) {
         clearInterval(temporizador); // Detener el temporizador cuando el jugador termina
         APP.classList.add("oculto");
 
@@ -182,7 +184,7 @@ function mostrarResultadoFinal(estatPartida, data) {
         btnEnviarespostes.addEventListener("click", async () => {
                 try {
                         const RESUL = await sendData(estatPartida);
-                        pintarResultatFinal(RESUL, data, finalizarQuiz);
+                        pintarResultatFinal(RESUL, finalizarQuiz);
                 } catch (error) {
                         console.error('Error al enviar los datos:', error);
                 }
@@ -192,15 +194,14 @@ function mostrarResultadoFinal(estatPartida, data) {
 }
 
 
-async function cargarPreguntas(data) {
-
+async function cargarPreguntas() {
         APP.appendChild(contadorDiv)
 
         for (const [indexPregunta, pregunta] of data.entries()) {
                 const divPregunta = document.createElement("div")
                 divPregunta.classList.add("pregunta")
 
-                if (indexPreg === indexPregunta) {
+                if (indexPreg == indexPregunta) {
                         divPregunta.classList.add("visible")
                 } else {
                         divPregunta.classList.add("oculto")
@@ -209,21 +210,22 @@ async function cargarPreguntas(data) {
                 const titulo = document.createElement("p")
                 titulo.textContent = `${indexPregunta + 1}- ${pregunta.pregunta}`
                 divPregunta.appendChild(titulo)
-                for (const resposta of pregunta.respostes) {
+
+                for (const [indexResp, resposta] of pregunta.respostes.entries()) {
                         const divRespostes = document.createElement("div");
                         const respostaBoton = document.createElement("button");
 
                         respostaBoton.textContent = resposta.resposta;
 
                         respostaBoton.addEventListener("click", () => {
-                                // Cambiao el color de fondo de todos los botones dentro del divRespostes
                                 const botones = divRespostes.parentNode.querySelectorAll("button") // Selecciona todos los botones en el mismo contenedor
                                 botones.forEach(boton => {
                                         boton.classList.remove("button-pulsado")
                                 })
                                 respostaBoton.classList.add("button-pulsado")
 
-                                estatPartida.preguntes[indexPregunta].resposta = resposta.indexResposta
+                                // Guardar la respuesta seleccionada
+                                estatPartida.preguntes[indexPregunta].resposta = indexResp + 1
                         })
 
                         divRespostes.appendChild(respostaBoton)
@@ -233,37 +235,45 @@ async function cargarPreguntas(data) {
                 APP.appendChild(divPregunta)
         }
 
+        // Inicializar la primera pregunta
         indexPreg = 0
+        mostrarPreguntaActual()
+
+        // Botón Anterior
         const btnAnterior = document.createElement("button")
         btnAnterior.textContent = "Anterior"
-        btnAnterior.classList.add("btnDisabled")
+        btnAnterior.classList.add("btnDisabled") // Deshabilitar al inicio
         btnAnterior.addEventListener("click", () => {
                 if (indexPreg > 0) {
                         indexPreg--
                         if (indexPreg == 0) {
-                                btnAnterior.classList.add("btnDisabled")
+                                btnAnterior.classList.add("btnDisabled") // Deshabilitar en la primera pregunta
                         }
+                        btnSiguiente.classList.remove("btnDisabled") // Habilitar el botón de Siguiente
                         mostrarPreguntaActual()
                 }
         })
         APP.appendChild(btnAnterior)
 
+        // Botón Siguiente
         const btnSiguiente = document.createElement("button")
         btnSiguiente.textContent = "Següent"
         btnSiguiente.addEventListener("click", () => {
-                btnAnterior.classList.remove("btnDisabled")
-                if (indexPreg < data.length) {
+                if (indexPreg < data.length - 1) { // Cambiado a data.length - 1 para evitar salir del array
                         indexPreg++
-                        if (indexPreg >= data.length) {
-                                mostrarResultadoFinal(estatPartida, data)
+                        btnAnterior.classList.remove("btnDisabled") // Habilitar el botón de Anterior
+                        if (indexPreg === data.length - 1) {
+                                btnSiguiente.classList.add("btnDisabled") // Deshabilitar en la última pregunta
                         }
                         mostrarPreguntaActual()
+                } else if (indexPreg === data.length - 1) {
+                        mostrarResultadoFinal(estatPartida)
                 }
         })
         APP.appendChild(btnSiguiente)
 }
 
-function pintarResultatFinal(resultat, data, finalizarQuiz) {
+function pintarResultatFinal(resultat, finalizarQuiz) {
 
         finalizarQuiz.classList.add("oculto")
 
@@ -286,17 +296,23 @@ function pintarResultatFinal(resultat, data, finalizarQuiz) {
         divResulFinal.appendChild(titulo)
 
         const pEstat = document.createElement("p")
-        pEstat.textContent = `Tens ${resultat.respCorr} pregunta/es bé i ${resultat.respMal} pregunta/es malament.`
+        pEstat.textContent = `Tens ${resultat.respCorr} pregunta/es bé, ${resultat.respMal} pregunta/es malament i ${resultat.respNoContestada} no contestada/es`
         divResulFinal.appendChild(pEstat)
 
         const pFallat = document.createElement("p")
         pFallat.textContent = `El resultat total es el següent:`
         divResulFinal.appendChild(pFallat)
 
-        console.log(resultat.estadoPreguntas);
+        console.log('Estado de la partida', estatPartida)
+        console.log('Estado de las preguntas: ', resultat.estadoPreguntas);
 
         for (let i = 0; i < resultat.totalPreg; i++) {
-                let resposta = resultat.estadoPreguntas[i] == 1 ? "bé" : "malament"
+                let resposta = resultat.estadoPreguntas[i] == 1
+                        ? "bé"
+                        : (resultat.estadoPreguntas[i] == 0
+                                ? "malament"
+                                : "no contestada")
+
                 console.log(resposta);
 
                 const pPreguntes = document.createElement("p")
@@ -308,7 +324,7 @@ function pintarResultatFinal(resultat, data, finalizarQuiz) {
         btnNouJoc.textContent = 'Tornar a jugar'
         btnNouJoc.addEventListener("click", async () => {
                 endQuiz()
-                cargarPreguntas(data)
+                cargarPreguntas()
                 introducirNombreParaJugar()
                 mostrarResultadoFinal.classList.add("oculto")
                 PLAYER.classList.remove("oculto")
@@ -451,6 +467,7 @@ function mostrarSeleccionNombre(nombresGuardados, link) {
                                                 title: "Oops...",
                                                 text: "El nom ja està guardat. Prova amb un altre.",
                                         });
+                                        INPUT.value = ''
                                 }
                         } else {
                                 Swal.fire({
@@ -458,6 +475,7 @@ function mostrarSeleccionNombre(nombresGuardados, link) {
                                         title: "Oops...",
                                         text: "Nom masa llarg.",
                                 });
+                                INPUT.value = ''
                         }
                 } else {
                         Swal.fire({

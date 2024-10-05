@@ -16,13 +16,17 @@ $respostes = new stdClass();
 $respostes->idPregunta = [];
 $respostes->respCorr = 0;
 $respostes->respMal = 0;
+$respostes->respNoContestada = 0;
 $respostes->totalPreg = 0;
 $respostes->estadoPreguntas = [];
 
 foreach (getData()['preguntes'] as $index => $pregunta) {
     $respostes->idPregunta[] = $pregunta["idPreg"];
 
-    if ($pregunta["resposta"] == $_SESSION["respuestas"][$index]) {
+    if ($pregunta['resposta'] == -1) {
+        $respostes->respNoContestada++;
+        $respostes->estadoPreguntas[$pregunta["idPreg"]] = -1;
+    } else if ($pregunta["resposta"] == $_SESSION["respuestas"][$index]) {
         $respostes->respCorr++;
         $respostes->estadoPreguntas[$pregunta["idPreg"]] = 1;
     } else {
@@ -31,6 +35,7 @@ foreach (getData()['preguntes'] as $index => $pregunta) {
     }
     $respostes->totalPreg++;
 }
+
 
 $response = $respostes;
 
