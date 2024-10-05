@@ -82,12 +82,13 @@ a {
 
 .sticky-button {
     position: sticky; /* Hace que el elemento se quede en la parte superior */
-    top: 0; 
+    margin-top: auto;
+    top: 10px; 
     z-index: 1000;
 }
 .sticky-button-volver {
     position: sticky; /* Permite que el contenedor sea sticky */
-    bottom: 0; /* Posiciona en la parte inferior */
+    bottom: 10px; /* Posiciona en la parte inferior */
 }
 
 button:last-child {

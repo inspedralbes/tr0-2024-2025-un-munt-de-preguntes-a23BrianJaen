@@ -35,10 +35,10 @@ function updateRespostasQuick($data, $conn)
 
     // Crear un array para las respuestas correctas
     $respostesCorrectes = [
-        $data['idRespCorr1'],
-        $data['idRespCorr2'],
-        $data['idRespCorr3'],
-        $data['idRespCorr4']
+        intval($data['idRespCorr1']),
+        intval($data['idRespCorr2']),
+        intval($data['idRespCorr3']),
+        intval($data['idRespCorr4'])
     ];
 
 
@@ -46,7 +46,7 @@ function updateRespostasQuick($data, $conn)
 
     foreach ($respostes as $index => $resposta) {
         // Comprobar si el índice es válido para respuestas correctas
-        $esCorrecte = ($respostesCorrectes[$index] === "1") ? 1 : 0;
+        $esCorrecte = ($respostesCorrectes[$index] === 1) ? 1 : 0;
         error_log('Resposta correcta '. $esCorrecte);
 
         $sql = "UPDATE respostes SET resposta = ?, respostaCorrecta = ? WHERE idResposta = ? AND idPreg = ?";

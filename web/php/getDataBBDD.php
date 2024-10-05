@@ -7,7 +7,7 @@ function transformDataJson()
     $resPreg = $conn->query($queryPreguntes);
     $queryRespostes = "SELECT * FROM respostes";
     $resResp = $conn->query($queryRespostes);
-    $queryRespostesCorrectes = "SELECT idPreg, respostaCorrecta AS indexRespostaCorrecta FROM respostes"; // <- comentarle al Pol esta solucion
+    $queryRespostesCorrectes = "SELECT idPreg, respostaCorrecta AS indexRespostaCorrecta FROM respostes";
     $resRespCoor = $conn->query($queryRespostesCorrectes);
 
     $preguntesData = array();
@@ -36,7 +36,7 @@ function transformDataJson()
             for ($i = 0; $i < count($preguntesData['preguntes'][$contPreg]['respostes']); $i++) {
                 $preguntesData['preguntes'][$contPreg]['respostes'][$i]['indexResposta'] = $i + 1;
                 if ($preguntesData['preguntes'][$contPreg]['respostes'][$i]['respostaCorrecta'] == "1") {
-                    $preguntesData['preguntes'][$contPreg]['indexRespostaCorrecta'] = $i + 1; // <- comentarle esto al Pol
+                    $preguntesData['preguntes'][$contPreg]['indexRespostaCorrecta'] = $i + 1;
                 }
             }
         }

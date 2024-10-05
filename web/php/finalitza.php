@@ -13,12 +13,21 @@ function getData()
 }
 
 $respostes = new stdClass();
+$respostes->idPregunta = [];
 $respostes->respCorr = 0;
+$respostes->respMal = 0;
 $respostes->totalPreg = 0;
+$respostes->estadoPreguntas = [];
 
-foreach (getData()['preguntes'] as $index["idPreg"] => $idRespuesta) {
-    if ($idRespuesta["resposta"] == $_SESSION["respuestas"][$index["idPreg"]]) {
+foreach (getData()['preguntes'] as $index => $pregunta) {
+    $respostes->idPregunta[] = $pregunta["idPreg"];
+
+    if ($pregunta["resposta"] == $_SESSION["respuestas"][$index]) {
         $respostes->respCorr++;
+        $respostes->estadoPreguntas[$pregunta["idPreg"]] = 1;
+    } else {
+        $respostes->respMal++;
+        $respostes->estadoPreguntas[$pregunta["idPreg"]] = 0;
     }
     $respostes->totalPreg++;
 }

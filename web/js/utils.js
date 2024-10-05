@@ -1,8 +1,12 @@
 const APP = document.getElementById("app")
 const PLAYER = document.getElementById("playerName")
-const contadorJuego = document.getElementById("contador")
+const cantidadPreguntas = document.getElementById("cantPreg")
+const contadorDiv = document.getElementById("contador");
+let nombreSeleccionadoJugador = 0
 let indexPreg = 0
 let estatPartida = null
+let data = []
+let temporizador
 
 function crearEstatPartida(cantantidadPreguntes) {
         let estatPartida = {
@@ -59,7 +63,7 @@ async function endQuiz() {
 async function inicializarApp() {
 
         const CANTPREG = localStorage.getItem("cantPreg")
-        let data = []
+        contadorDiv.classList.remove("oculto")
 
         data = await getData(CANTPREG)
         estatPartida = crearEstatPartida(data.length)
@@ -82,39 +86,115 @@ function mostrarPreguntaActual() {
         }
 }
 
-function mostrarResultadoFinal(estatPartida, data) {
-        APP.classList.add("oculto")
+function iniciarTemporizador() {
+        contadorDiv.innerHTML = ''
 
-        const finalizarQuiz = document.getElementById("finalizarQuiz")
-        finalizarQuiz.innerHTML = ''
+        let cantidadPreguntas = localStorage.getItem("cantPreg")
 
-        finalizarQuiz.classList.remove("oculto")
+        // inicializa el temporizador
+        if (cantidadPreguntas == 5) {
+                tiempoRestante = 30
+        }
+        if (cantidadPreguntas == 10) {
+                tiempoRestante = 60
+        }
+        if (cantidadPreguntas == 15) {
+                tiempoRestante = 90
+        }
+        console.log(cantidadPreguntas);
 
-        const divMostrarResulFinal = document.createElement("div")
+        const htemporizador = document.createElement("h2")
+        htemporizador.textContent = `Temps restant: ${tiempoRestante}s`
 
-        const enhorabuena = document.createElement("h3")
-        enhorabuena.textContent = "Enhorabona, has acabat el qüestionari."
+        temporizador = setInterval(() => {
+                tiempoRestante--;
 
-        divMostrarResulFinal.appendChild(enhorabuena)
+                htemporizador.textContent = `Temps restant: ${tiempoRestante}s`;
 
-        finalizarQuiz.appendChild(divMostrarResulFinal)
-
-        const btnEnviarespostes = document.createElement("button")
-        btnEnviarespostes.textContent = 'Enviar respostes'
-        btnEnviarespostes.addEventListener("click", async () => {
-                try {
-                        const RESUL = await sendData(estatPartida)
-                        pintarResultatFinal(RESUL, data, finalizarQuiz)
-                } catch (error) {
-                        console.error('Error al enviar los datos:', error)
+                if (tiempoRestante <= 10) {
+                        htemporizador.innerHTML = `Temps restant: <span style="color: orange;">${tiempoRestante}</span>s`;
                 }
-        })
+                if (tiempoRestante <= 5) {
+                        htemporizador.innerHTML = `Temps restant: <span style="color: red;">${tiempoRestante}</span>s`;
+                }
 
-        finalizarQuiz.appendChild(btnEnviarespostes)
+                if (tiempoRestante <= 0) {
+                        clearInterval(temporizador); // Detener el temporizador
 
+                        Swal.fire({
+                                icon: "error",
+                                title: "S'ha esgotat el temps!!!",
+                        });
+                        enviarRespuestasAutomaticamente();
+                }
+        }, 1000);
+
+        contadorDiv.appendChild(htemporizador)
 }
 
+// Función que se llama automáticamente cuando el tiempo se agota
+async function enviarRespuestasAutomaticamente() {
+        APP.classList.add("oculto")
+        const finalizarQuiz = document.getElementById("finalizarQuiz");
+
+        try {
+                const RESUL = await sendData(estatPartida);
+                pintarResultatFinal(RESUL, data, finalizarQuiz);
+        } catch (error) {
+                console.error('Error al enviar las respuestas automáticamente:', error);
+        }
+}
+
+// Iniciar el juego con temporizador
+function iniciarJuego(nombreJugador) {
+        console.log(`El jugador ${nombreJugador} está listo para jugar.`);
+
+        inicializarApp(); // Iniciar las preguntas
+
+        // Ocultar el input de nombre y comenzar el temporizador
+        PLAYER.classList.add("oculto");
+
+        // Iniciar el temporizador de 30 segundos
+        iniciarTemporizador();
+}
+
+// Mostrar la pregunta actual y detener el temporizador si el jugador termina antes
+function mostrarResultadoFinal(estatPartida, data) {
+        clearInterval(temporizador); // Detener el temporizador cuando el jugador termina
+        APP.classList.add("oculto");
+
+        const finalizarQuiz = document.getElementById("finalizarQuiz");
+        finalizarQuiz.innerHTML = '';
+
+        finalizarQuiz.classList.remove("oculto");
+
+        const divMostrarResulFinal = document.createElement("div");
+
+        const enhorabuena = document.createElement("h3");
+        enhorabuena.innerHTML = `Enhorabona <span style="color: blueviolet;">${nombreSeleccionadoJugador}</span>, has acabat el qüestionari.`;
+
+        divMostrarResulFinal.appendChild(enhorabuena);
+
+        finalizarQuiz.appendChild(divMostrarResulFinal);
+
+        const btnEnviarespostes = document.createElement("button");
+        btnEnviarespostes.textContent = 'Enviar respostes';
+        btnEnviarespostes.addEventListener("click", async () => {
+                try {
+                        const RESUL = await sendData(estatPartida);
+                        pintarResultatFinal(RESUL, data, finalizarQuiz);
+                } catch (error) {
+                        console.error('Error al enviar los datos:', error);
+                }
+        });
+
+        finalizarQuiz.appendChild(btnEnviarespostes);
+}
+
+
 async function cargarPreguntas(data) {
+
+        APP.appendChild(contadorDiv)
 
         for (const [indexPregunta, pregunta] of data.entries()) {
                 const divPregunta = document.createElement("div")
@@ -129,7 +209,7 @@ async function cargarPreguntas(data) {
                 const titulo = document.createElement("p")
                 titulo.textContent = `${indexPregunta + 1}- ${pregunta.pregunta}`
                 divPregunta.appendChild(titulo)
-                for (const [indexResp, resposta] of pregunta.respostes.entries()) {
+                for (const resposta of pregunta.respostes) {
                         const divRespostes = document.createElement("div");
                         const respostaBoton = document.createElement("button");
 
@@ -137,7 +217,7 @@ async function cargarPreguntas(data) {
 
                         respostaBoton.addEventListener("click", () => {
                                 // Cambiao el color de fondo de todos los botones dentro del divRespostes
-                                const botones = divRespostes.parentNode.querySelectorAll("button"); // Selecciona todos los botones en el mismo contenedor
+                                const botones = divRespostes.parentNode.querySelectorAll("button") // Selecciona todos los botones en el mismo contenedor
                                 botones.forEach(boton => {
                                         boton.classList.remove("button-pulsado")
                                 })
@@ -156,9 +236,13 @@ async function cargarPreguntas(data) {
         indexPreg = 0
         const btnAnterior = document.createElement("button")
         btnAnterior.textContent = "Anterior"
+        btnAnterior.classList.add("btnDisabled")
         btnAnterior.addEventListener("click", () => {
                 if (indexPreg > 0) {
                         indexPreg--
+                        if (indexPreg == 0) {
+                                btnAnterior.classList.add("btnDisabled")
+                        }
                         mostrarPreguntaActual()
                 }
         })
@@ -167,10 +251,11 @@ async function cargarPreguntas(data) {
         const btnSiguiente = document.createElement("button")
         btnSiguiente.textContent = "Següent"
         btnSiguiente.addEventListener("click", () => {
+                btnAnterior.classList.remove("btnDisabled")
                 if (indexPreg < data.length) {
                         indexPreg++
                         if (indexPreg >= data.length) {
-                                mostrarResultadoFinal(estatPartida, data, APP)
+                                mostrarResultadoFinal(estatPartida, data)
                         }
                         mostrarPreguntaActual()
                 }
@@ -184,17 +269,40 @@ function pintarResultatFinal(resultat, data, finalizarQuiz) {
 
         const mostrarResultadoFinal = document.getElementById("mostrarResultadoFinal")
 
+        console.log(resultat)
+
         if (resultat.respCorr == undefined) {
                 resultat.respCrr = 0
         }
 
+        if (resultat.respMal == undefined) {
+                resultat.respMal = 0
+        }
+
         const divResulFinal = document.createElement("div")
-        const titulo = document.createElement("h2")
+        const titulo = document.createElement("h1")
 
-        titulo.textContent = 'Resultat final'
+        titulo.innerHTML = `Resultat final de <span style="color: blueviolet;">${nombreSeleccionadoJugador}</span>.`
+        divResulFinal.appendChild(titulo)
 
-        const pResultat = document.createElement("p")
-        pResultat.textContent = `Preguntes correctes ${resultat.respCorr}/${resultat.totalPreg}`
+        const pEstat = document.createElement("p")
+        pEstat.textContent = `Tens ${resultat.respCorr} pregunta/es bé i ${resultat.respMal} pregunta/es malament.`
+        divResulFinal.appendChild(pEstat)
+
+        const pFallat = document.createElement("p")
+        pFallat.textContent = `El resultat total es el següent:`
+        divResulFinal.appendChild(pFallat)
+
+        console.log(resultat.estadoPreguntas);
+
+        for (let i = 0; i < resultat.totalPreg; i++) {
+                let resposta = resultat.estadoPreguntas[i] == 1 ? "bé" : "malament"
+                console.log(resposta);
+
+                const pPreguntes = document.createElement("p")
+                pPreguntes.textContent = `Pregunta ${i + 1}: ${resposta}`
+                divResulFinal.appendChild(pPreguntes)
+        }
 
         const btnNouJoc = document.createElement("button")
         btnNouJoc.textContent = 'Tornar a jugar'
@@ -207,8 +315,6 @@ function pintarResultatFinal(resultat, data, finalizarQuiz) {
                 mostrarResultadoFinal.innerHTML = ''
         })
 
-        divResulFinal.appendChild(titulo)
-        divResulFinal.appendChild(pResultat)
         divResulFinal.appendChild(btnNouJoc)
         mostrarResultadoFinal.appendChild(divResulFinal)
         mostrarResultadoFinal.classList.remove("oculto")
@@ -216,6 +322,8 @@ function pintarResultatFinal(resultat, data, finalizarQuiz) {
 
 function introducirNombreParaJugar() {
         APP.classList.add("oculto")
+        cantidadPreguntas.classList.add("oculto")
+        contadorDiv.classList.add("oculto")
         PLAYER.innerHTML = ''
 
         if (PLAYER) {
@@ -227,72 +335,88 @@ function introducirNombreParaJugar() {
                 PLAYER.appendChild(link)
 
                 const nombresGuardados = JSON.parse(localStorage.getItem("nombresUsuarios")) || []
-                mostrarSeleccionNombre(nombresGuardados, PLAYER, link)
+                mostrarSeleccionNombre(nombresGuardados, link)
         }
 
 }
 
-function mostrarSeleccionNombre(nombresGuardados, PLAYER, link) {
+function mostrarSeleccionNombre(nombresGuardados, link) {
         const divPlayer = document.createElement("div")
+        // divPlayer.innerHTML = ''
+
+        const select = document.createElement("select")
+        const selectEliminar = document.createElement("select")
 
         // Crear un desplegable para seleccionar un nombre para jugar
         if (nombresGuardados.length > 0) {
-                const select = document.createElement("select")
                 select.id = "selectNombre"
 
-                nombresGuardados.forEach(nombre => { // itero sobre la cantidad de nombres que hay para saber la longitud del desblegable
+                nombresGuardados.forEach(nombre => {
                         const option = document.createElement("option")
                         option.value = nombre
                         option.textContent = nombre
                         select.appendChild(option)
                 })
-
                 divPlayer.appendChild(select)
 
                 // Botón para seleccionar el nombre y comenzar el juego
                 const buttonJugar = document.createElement("button")
-                buttonJugar.textContent = "Seleccionar y jugar"
+                buttonJugar.textContent = "Seleccionar nom"
                 buttonJugar.addEventListener("click", () => {
-                        const nombreSeleccionado = select.value
+                        PLAYER.classList.add("oculto")
                         link.classList.add("oculto")
-                        iniciarJuego(nombreSeleccionado, PLAYER)
+                        cantidadPreguntas.classList.add("oculto")
+                        cantidadPreguntas.innerHTML = ''
+                        nombreSeleccionadoJugador = select.value
+                        seleccionarCantidadPreguntas()
                 })
-
                 divPlayer.appendChild(buttonJugar)
 
                 // Desplegable para seleccionar un nombre para eliminar
-                const selectEliminar = document.createElement("select")
                 selectEliminar.id = "selectEliminarNombre"
                 selectEliminar.appendChild(document.createElement("option")) // Opción vacía
 
-                nombresGuardados.forEach(nombre => { // itero sobre la cantidad de nombres que hay para saber la longitud del desblegable
+                nombresGuardados.forEach(nombre => {
                         const option = document.createElement("option")
                         option.value = nombre
                         option.textContent = nombre
                         selectEliminar.appendChild(option)
                 })
-
                 divPlayer.appendChild(selectEliminar)
 
                 // Botón para eliminar el nombre seleccionado
                 const buttonEliminar = document.createElement("button")
-                buttonEliminar.textContent = "Eliminar nombre"
+                buttonEliminar.textContent = "Eliminar nom"
                 buttonEliminar.addEventListener("click", () => {
                         const nombreAEliminar = selectEliminar.value
                         if (nombreAEliminar) {
-                                eliminarNombre(nombreAEliminar)
+                                eliminarNombre(nombreAEliminar) // Eliminar nombre de localStorage
+                                nombresGuardados = nombresGuardados.filter(nombre => nombre !== nombreAEliminar)
+                                // Actualizar visualización del select
+                                actualizarSelectores(select, selectEliminar, nombresGuardados)
+                                // divPlayer.innerHTML = ''
+                                console.log(nombresGuardados.length)
+                                // if(nombresGuardados.length > 0){
+                                //         console.log("se muestran los botones e inputs")
+                                //         mostrarSeleccionNombre(nombresGuardados, link)
+                                // } else {
+                                //         console.log("se dejan de mostrar los botones e inputs")
+                                // }
                         } else {
-                                alert("Selecciona un nombre para eliminar.")
+                                Swal.fire({
+                                        icon: "error",
+                                        title: "Oops...",
+                                        text: "Selecciona un nom a eliminar.",
+                                });
                         }
-                        location.reload()
                 })
-
                 divPlayer.appendChild(buttonEliminar)
         } else {
                 const mensaje = document.createElement("p")
-                mensaje.textContent = "No hi ha noms enmagatzemats. Si us plau, introdueix-ne un."
+                mensaje.textContent = "No hi ha noms emmagatzemats. Si us plau, introdueix-ne un."
                 divPlayer.appendChild(mensaje)
         }
+
 
         // Crear el formulario para agregar un nuevo nombre
         const LABEL = document.createElement("label")
@@ -301,50 +425,76 @@ function mostrarSeleccionNombre(nombresGuardados, PLAYER, link) {
         const INPUT = document.createElement("input")
         INPUT.type = "text"
         INPUT.id = "nombre"
+        INPUT.placeholder = 'Màxim 15 caràcters'
 
         const BUTTON = document.createElement("button")
         BUTTON.textContent = `Guarda nom`
 
         BUTTON.addEventListener("click", () => {
-                const nombre = document.getElementById("nombre").value;
+                const nombre = document.getElementById("nombre").value
                 if (nombre) {
-                        // Obtengo los nombres guardados de lo contrario creo un array vacio
-                        const nombresGuardados = JSON.parse(localStorage.getItem("nombresUsuarios")) || []
-                        if (!nombresGuardados.includes(nombre)) { // Verificar si el nombre ya está guardado
-                                nombresGuardados.push(nombre)
-                                localStorage.setItem("nombresUsuarios", JSON.stringify(nombresGuardados)) // Guardar en localStorage
-                                console.log(`Nombre guardado: ${nombre}`)
-                                location.reload()
+                        if (nombre.length <= 15) {
+                                const nombresGuardados = JSON.parse(localStorage.getItem("nombresUsuarios")) || []
+                                if (!nombresGuardados.includes(nombre)) { // Verificar si el nombre ya está guardado
+                                        nombresGuardados.push(nombre)
+                                        localStorage.setItem("nombresUsuarios", JSON.stringify(nombresGuardados)) // Guardar en localStorage
+                                        INPUT.value = ''
+                                        console.log(`Nombre guardado: ${nombre}`)
+                                        // poner aqui el sweetAlert de que se esta gaurdando
+                                        location.reload() // QUITAR
+                                        // Actualizar visualización del select
+                                        actualizarSelectores(select, selectEliminar, nombresGuardados)
+                                        // mostrarSeleccionNombre(nombresGuardados, link)
+                                } else {
+                                        Swal.fire({
+                                                icon: "error",
+                                                title: "Oops...",
+                                                text: "El nom ja està guardat. Prova amb un altre.",
+                                        });
+                                }
                         } else {
-                                alert("El nom ja està guardat. Prova amb un altre.")
+                                Swal.fire({
+                                        icon: "error",
+                                        title: "Oops...",
+                                        text: "Nom masa llarg.",
+                                });
                         }
                 } else {
-                        alert("Siusplau, introduiex un nom")
+                        Swal.fire({
+                                icon: "error",
+                                title: "Oops...",
+                                text: "Siusplau, introdueix un nom.",
+                        });
                 }
-        })
-
-        const LABELpreguntes = document.createElement("label")
-        LABELpreguntes.textContent = `Escriu la quantita de preguntes:`
-
-        const inputCantPreg = document.createElement("input")
-        inputCantPreg.type = "text"
-        inputCantPreg.id = "cantPreguntes"
-
-        const btnCantPreg = document.createElement("button")
-        btnCantPreg.textContent = "Selecciona quantiat"
-        btnCantPreg.addEventListener("click", () => {
-                const cantitaPreguntes = document.getElementById("cantPreguntes").value;
-                localStorage.setItem("cantPreg", cantitaPreguntes)
         })
 
         divPlayer.appendChild(LABEL)
         divPlayer.appendChild(INPUT)
         divPlayer.appendChild(BUTTON)
-        divPlayer.appendChild(LABELpreguntes)
-        divPlayer.appendChild(inputCantPreg)
-        divPlayer.appendChild(btnCantPreg)
 
         PLAYER.appendChild(divPlayer)
+}
+
+
+function actualizarSelectores(select, selectEliminar, nombresGuardados) {
+
+        // Limpiar las opciones existentes en ambos selects
+        select.innerHTML = '';
+        selectEliminar.innerHTML = '<option></option>'; // Agregar opción vacía en selectEliminar
+
+        // Agregar las opciones nuevas basadas en nombresGuardados
+        nombresGuardados.forEach(nombre => {
+                const option = document.createElement("option");
+                option.value = nombre;
+                option.textContent = nombre;
+                select.appendChild(option);
+
+                const optionEliminar = document.createElement("option");
+                optionEliminar.value = nombre;
+                optionEliminar.textContent = nombre;
+                selectEliminar.appendChild(optionEliminar);
+        });
+
 }
 
 function eliminarNombre(nombre) {
@@ -357,16 +507,58 @@ function eliminarNombre(nombre) {
                         nuevosNombres.push(nombresGuardados[i]) // si no es el nombre a eliminar me lo guardo
                 }
         }
-        location.reload()
+        // poner aqui el sweetAlert de que se a eliminado correctamente
+
+        location.reload() // QUITAR
         localStorage.setItem("nombresUsuarios", JSON.stringify(nuevosNombres));
         console.log(`Nombre eliminado: ${nombre}`)
 }
 
-// Función para iniciar el juego con el nombre seleccionado
-function iniciarJuego(nombreJugador, PLAYER) {
-        console.log(`El jugador ${nombreJugador} está listo para jugar.`);
-        inicializarApp()
-        PLAYER.classList.add("oculto")
+function seleccionarCantidadPreguntas() {
+        cantidadPreguntas.classList.remove("oculto")
+
+        const divCantPreg = document.createElement("div")
+
+        const LABELpreguntes = document.createElement("label")
+        LABELpreguntes.textContent = `Digues la quantitat de preguntes:`
+
+        localStorage.setItem("cantPreg", 0) // seteo la cantidad de preguntas
+
+        // Escoger la cantidad de preguntas segun el nivel de dificultad
+        const selectCantPreg = document.createElement("select")
+        selectCantPreg.id = "slecetCantPreg"
+        selectCantPreg.classList.add("selectCantPreg")
+
+        const option1 = document.createElement("option")
+        option1.value = 5
+        option1.textContent = 'Cinc preguntes nivell fàcil'
+        selectCantPreg.appendChild(option1)
+
+        const option2 = document.createElement("option")
+        option2.value = 10
+        option2.textContent = 'Deu preguntes nivell mitjà'
+        selectCantPreg.appendChild(option2)
+
+        const option3 = document.createElement("option")
+        option3.value = 15
+        option3.textContent = 'Quinze preguntes mode difícil'
+        selectCantPreg.appendChild(option3)
+
+        const btnCantPreg = document.createElement("button")
+        btnCantPreg.textContent = "Selecciona quantiat y jugar"
+        btnCantPreg.addEventListener("click", () => {
+                const cantitaPreguntes = document.getElementById("slecetCantPreg").value
+                localStorage.setItem("cantPreg", cantitaPreguntes)
+                iniciarJuego(nombreSeleccionadoJugador)
+                cantidadPreguntas.classList.add("oculto")
+        })
+
+        divCantPreg.appendChild(LABELpreguntes)
+        // divCantPreg.appendChild(inputCantPreg)
+        divCantPreg.appendChild(selectCantPreg)
+        divCantPreg.appendChild(btnCantPreg)
+
+        cantidadPreguntas.appendChild(divCantPreg)
 }
 
 introducirNombreParaJugar()

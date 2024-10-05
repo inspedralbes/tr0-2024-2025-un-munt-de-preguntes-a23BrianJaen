@@ -112,8 +112,6 @@ async function cargarPreguntas(data) {
         const celdaRespostesCorrectes = document.createElement("td")
         const listaRespostesCorrectes = document.createElement("ul")
 
-        // let respCorr = false
-
         let idRespEditQuick = []
         let idRespCorrEditQuick = []
 
@@ -235,42 +233,55 @@ async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, id
     INPUTPREGUNTA.value = pregunta.pregunta
     thQuickEditPreg.appendChild(INPUTPREGUNTA)
 
-    // Arrays para almacenar los inputs de las respuestas y los estados correctos
+    // Arrays para almacenar los inputs de las respuestas y los IDs
     const respuestasInputs = []
     const respuestasIds = []
-    const respuestasCorrectas = []
+    let respuestaCorrectaSeleccionada // Para almacenar la respuesta correcta seleccionada
 
     for (let i = 0; i < pregunta.respostes.length; i++) {
         const thQuickEditResp = idRespEditQuick[i]
         thQuickEditResp.innerHTML = ""
-    
+
         // Input para el texto de la respuesta
         const INPUTRESPOSTES = document.createElement("input")
         INPUTRESPOSTES.type = "text"
         INPUTRESPOSTES.size = pregunta.respostes[i].resposta.length
         INPUTRESPOSTES.value = pregunta.respostes[i].resposta
         thQuickEditResp.appendChild(INPUTRESPOSTES)
-    
+
         // Guardar inputs de respuestas y sus IDs
         respuestasInputs.push(INPUTRESPOSTES)
         respuestasIds.push(pregunta.respostes[i].idResposta)
-    
+
         const thQuickEditRespCorr = idRespCorrEditQuick[i]
         thQuickEditRespCorr.innerHTML = ""
-    
+
+        // Input tipo radio para seleccionar la respuesta correcta
         const INPUTRESPOTESCORRECTES = document.createElement("input")
-        INPUTRESPOTESCORRECTES.id = `inputResposta_${pregunta.idPregunta}_${i}`
-        INPUTRESPOTESCORRECTES.type = "type"
-        INPUTRESPOTESCORRECTES.size = pregunta.respostes[i].respostaCorrecta.length 
-        INPUTRESPOTESCORRECTES.value = pregunta.respostes[i].respostaCorrecta 
-    
-        thQuickEditRespCorr.appendChild(INPUTRESPOTESCORRECTES)
-    
+        INPUTRESPOTESCORRECTES.type = "radio"
+        INPUTRESPOTESCORRECTES.name = `respuestaCorrecta_${pregunta.idPregunta}` // Todos los radios de la misma pregunta tienen el mismo name
+        INPUTRESPOTESCORRECTES.value = pregunta.respostes[i].idResposta
+
+        // Establecer el radio como seleccionado si es la respuesta correcta
         INPUTRESPOTESCORRECTES.checked = pregunta.respostes[i].respostaCorrecta == 1
-    
-        respuestasCorrectas.push(INPUTRESPOTESCORRECTES.checked)
+
+
+        // Si el radio está marcado como correcto, actualizar la variable
+        if (INPUTRESPOTESCORRECTES.checked) {
+            respuestaCorrectaSeleccionada = pregunta.respostes[i].idResposta
+            console.log(respuestaCorrectaSeleccionada);
+
+        }
+
+        // Evento que actualiza la respuesta correcta cuando el radio cambia
+        INPUTRESPOTESCORRECTES.addEventListener('change', () => {
+            respuestaCorrectaSeleccionada = pregunta.respostes[i].idResposta
+            console.log(respuestaCorrectaSeleccionada);
+
+        })
+
+        thQuickEditRespCorr.appendChild(INPUTRESPOTESCORRECTES)
     }
-    
 
     const btnGuardarResul = document.createElement("button")
     btnGuardarResul.textContent = "Guardar cambios"
@@ -281,22 +292,23 @@ async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, id
             pregunta: INPUTPREGUNTA.value
         }
 
-        for (let i = 0; i < pregunta.respostes.length; i++) { // recorro la cantidad de respuestas
-            respuestasCorrectas[i] = document.getElementById(`inputResposta_${pregunta.idPregunta}_${i}`).value
-
+        for (let i = 0; i < pregunta.respostes.length; i++) {
             datosActualizados[`idResp${i + 1}`] = respuestasInputs[i].value
-            datosActualizados[`idRespCorr${i + 1}`] = respuestasCorrectas[i]
+            datosActualizados[`idRespCorr${i + 1}`] = respuestaCorrectaSeleccionada === respuestasIds[i] ? 1 : 0 // Solo la respuesta seleccionada es correcta            
             datosActualizados[`idResposta${i + 1}`] = respuestasIds[i]
         }
+
+        console.log(datosActualizados);
 
         const jsonData = JSON.stringify(datosActualizados)
 
         await sendDataUpdateQuick(jsonData)
 
+        // alert("S'ha completat la solicitud")
+        completarSolicitud() // AQUI CO
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
 
-        alert("S'ha completat solicitud")
     })
 
     celdaAccions.appendChild(btnGuardarResul)
@@ -305,7 +317,9 @@ async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, id
     btnCanelar.type = "button"
     btnCanelar.textContent = 'Cancela'
     btnCanelar.addEventListener("click", async () => {
-        alert("S'ha cancelat la solicitud")
+        cancelarSolicitud() // AQUI
+
+        // alert("S'ha cancelat la solicitud")
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
         MOSTRAPREGUNTES.classList.remove("oculto")
@@ -313,8 +327,8 @@ async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, id
     })
 
     celdaAccions.appendChild(btnCanelar)
-
 }
+
 
 function editaPregunta(pregunta) {
 
@@ -389,7 +403,8 @@ function editaPregunta(pregunta) {
         console.log("entra")
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
-        alert("S'ha cancelat la solicitud")
+        cancelarSolicitud() // AQUI
+        // alert("S'ha cancelat la solicitud")
         MOSTRAPREGUNTES.classList.remove("oculto")
         editar.classList.add("oculto")
     })
@@ -412,9 +427,11 @@ function editaPregunta(pregunta) {
 
         await sendDataUpdate(jsonData)
 
+        // alert("S'ha completat la solicitud")
+        completarSolicitud() // AQUI CO
+
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
-        alert("S'ha completat la solicitud")
         MOSTRAPREGUNTES.classList.remove("oculto")
         editar.classList.add("oculto")
     })
@@ -435,9 +452,10 @@ async function eliminarPregunta(idPregunta) {
         body: JSON.stringify(idPreg)
     })
 
+    completarSolicitud() // AQUI CO
+    // alert("S'ha completat la solicitud")
     const actualizaData = await getData()
     cargarPreguntas(actualizaData)
-    alert("S'ha completat la solicitud")
 }
 
 async function insertarPregunta() {
@@ -488,10 +506,11 @@ async function insertarPregunta() {
     btnCanelar.type = "button"
     btnCanelar.textContent = 'Cancela'
     btnCanelar.addEventListener("click", async () => {
-        console.log("entra")
+        // console.log("entra")
+        cancelarSolicitud() // AQUI
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
-        alert("S'ha cancelat la solicitud")
+        // alert("S'ha cancelat la solicitud")
 
         MOSTRAPREGUNTES.classList.remove("oculto")
         INSERTAR.classList.add("oculto")
@@ -511,19 +530,69 @@ async function insertarPregunta() {
 
         const jsonData = JSON.stringify(formObject)
         await sendDataInsert(jsonData)
-
+        
+        completarSolicitud() // AQUI CO
+        // alert("S'ha completat solicitud")
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
 
-        
+
         MOSTRAPREGUNTES.classList.remove("oculto")
         INSERTAR.classList.add("oculto")
-        alert("S'ha completat solicitud")
     })
 
     divInsertar.appendChild(FORMULARI)
     INSERTAR.appendChild(divInsertar)
     console.log(INSERTAR)
+}
+
+function cancelarSolicitud() {
+    let timerInterval;
+    Swal.fire({
+        title: "Cancel·lant sol·licitud...",
+        html: "Es tancara <b></b> milliseconds.",
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: () => {
+            Swal.showLoading();
+            const timer = Swal.getPopup().querySelector("b");
+            timerInterval = setInterval(() => {
+                timer.textContent = `${Swal.getTimerLeft()}`;
+            }, 100);
+        },
+        willClose: () => {
+            clearInterval(timerInterval);
+        }
+    }).then((result) => {
+        /* Read more about handling dismissals below */
+        if (result.dismiss === Swal.DismissReason.timer) {
+            console.log("I was closed by the timer");
+        }
+    });
+}
+function completarSolicitud() {
+    let timerInterval;
+    Swal.fire({
+        title: "Completant sol·licitud...",
+        html: "Es tancara <b></b> milliseconds.",
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: () => {
+            Swal.showLoading();
+            const timer = Swal.getPopup().querySelector("b");
+            timerInterval = setInterval(() => {
+                timer.textContent = `${Swal.getTimerLeft()}`;
+            }, 100);
+        },
+        willClose: () => {
+            clearInterval(timerInterval);
+        }
+    }).then((result) => {
+        /* Read more about handling dismissals below */
+        if (result.dismiss === Swal.DismissReason.timer) {
+            console.log("I was closed by the timer");
+        }
+    });
 }
 
 mostrarBBDD()
