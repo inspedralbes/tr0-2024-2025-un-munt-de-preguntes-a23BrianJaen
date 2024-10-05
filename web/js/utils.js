@@ -2,6 +2,8 @@ const APP = document.getElementById("app")
 const PLAYER = document.getElementById("playerName")
 const cantidadPreguntas = document.getElementById("cantPreg")
 const contadorDiv = document.getElementById("contador");
+const finalizarQuiz = document.getElementById("finalizarQuiz");
+const mostrarResulFinal = document.getElementById("mostrarResultadoFinal")
 let nombreSeleccionadoJugador = 0
 let indexPreg = 0
 let estatPartida = null
@@ -136,7 +138,7 @@ function iniciarTemporizador() {
 // Función que se llama automáticamente cuando el tiempo se agota
 async function enviarRespuestasAutomaticamente() {
         APP.classList.add("oculto")
-        const finalizarQuiz = document.getElementById("finalizarQuiz");
+
 
         try {
                 const RESUL = await sendData(estatPartida);
@@ -277,8 +279,6 @@ function pintarResultatFinal(resultat, finalizarQuiz) {
 
         finalizarQuiz.classList.add("oculto")
 
-        const mostrarResultadoFinal = document.getElementById("mostrarResultadoFinal")
-
         console.log(resultat)
 
         if (resultat.respCorr == undefined) {
@@ -307,7 +307,7 @@ function pintarResultatFinal(resultat, finalizarQuiz) {
         console.log('Estado de las preguntas: ', resultat.estadoPreguntas);
 
         for (let i = 0; i < resultat.totalPreg; i++) {
-                let resposta = resultat.estadoPreguntas[i] == 1
+                let resposta = resultat.estadoPreguntas[i] == 1 // cambiar eso a un IF
                         ? "bé"
                         : (resultat.estadoPreguntas[i] == 0
                                 ? "malament"
@@ -326,14 +326,14 @@ function pintarResultatFinal(resultat, finalizarQuiz) {
                 endQuiz()
                 cargarPreguntas()
                 introducirNombreParaJugar()
-                mostrarResultadoFinal.classList.add("oculto")
+                mostrarResulFinal.classList.add("oculto")
                 PLAYER.classList.remove("oculto")
-                mostrarResultadoFinal.innerHTML = ''
+                mostrarResulFinal.innerHTML = ''
         })
 
         divResulFinal.appendChild(btnNouJoc)
-        mostrarResultadoFinal.appendChild(divResulFinal)
-        mostrarResultadoFinal.classList.remove("oculto")
+        mostrarResulFinal.appendChild(divResulFinal)
+        mostrarResulFinal.classList.remove("oculto")
 }
 
 function introducirNombreParaJugar() {
@@ -344,7 +344,7 @@ function introducirNombreParaJugar() {
 
         if (PLAYER) {
                 const pLink = document.createElement("p")
-                pLink.textContent = 'Panell Administrador'
+                pLink.textContent = 'Anar al Panell Administrador'
                 const link = document.createElement("a")
                 link.href = './backPanel.html'
                 link.appendChild(pLink)
@@ -356,139 +356,251 @@ function introducirNombreParaJugar() {
 
 }
 
+function mostrarPaginaIncial() {
+        contadorDiv.classList.add("oculto")
+        PLAYER.classList.remove("oculto")
+        cantidadPreguntas.classList.add("oculto")
+        APP.classList.add("oculto")
+        finalizarQuiz.classList.add("oculto")
+        mostrarResulFinal.classList.add("oculto")
+
+}
+
 function mostrarSeleccionNombre(nombresGuardados, link) {
+
         const divPlayer = document.createElement("div")
-        // divPlayer.innerHTML = ''
 
         const select = document.createElement("select")
         const selectEliminar = document.createElement("select")
+        const LABEL = document.createElement("label")
+        const btnNom = document.createElement("button")
+        const btnGuardaNom = document.createElement("button")
+        const btnElimina = document.createElement("button")
+        const btnCacelar = document.createElement("button")
+        const buttonGuardaNom = document.createElement("button")
+        const buttonEliminar = document.createElement("button")
+        const buttonJugar = document.createElement("button")
+        const inputNom = document.createElement("input")
 
         // Crear un desplegable para seleccionar un nombre para jugar
+
         if (nombresGuardados.length > 0) {
                 select.id = "selectNombre"
 
-                nombresGuardados.forEach(nombre => {
-                        const option = document.createElement("option")
-                        option.value = nombre
-                        option.textContent = nombre
-                        select.appendChild(option)
-                })
-                divPlayer.appendChild(select)
+                btnNom.textContent = 'Selecció de nom'
+                btnNom.addEventListener("click", () => {
+                        inputNom.classList.add("oculto")
+                        btnNom.classList.add("oculto")
+                        btnElimina.classList.add("oculto")
+                        btnGuardaNom.classList.add("oculto")
+                        buttonEliminar.classList.add("oculto")
+                        selectEliminar.classList.add("oculto")
+                        LABEL.classList.add("oculto")
+                        buttonGuardaNom.classList.add("oculto")
 
-                // Botón para seleccionar el nombre y comenzar el juego
-                const buttonJugar = document.createElement("button")
-                buttonJugar.textContent = "Seleccionar nom"
-                buttonJugar.addEventListener("click", () => {
-                        PLAYER.classList.add("oculto")
-                        link.classList.add("oculto")
-                        cantidadPreguntas.classList.add("oculto")
-                        cantidadPreguntas.innerHTML = ''
-                        nombreSeleccionadoJugador = select.value
-                        seleccionarCantidadPreguntas()
+                        buttonJugar.classList.remove("oculto")
+                        select.classList.remove("oculto")
+                        nombresGuardados.forEach(nombre => {
+                                const option = document.createElement("option")
+                                option.value = nombre
+                                option.textContent = nombre
+                                select.appendChild(option)
+                        })
+                        divPlayer.appendChild(select)
+
+                        // Botón para seleccionar el nombre y comenzar el juego
+                        buttonJugar.textContent = "Selecciona nom"
+                        buttonJugar.addEventListener("click", () => {
+                                PLAYER.classList.add("oculto")
+                                link.classList.add("oculto")
+                                cantidadPreguntas.classList.add("oculto")
+                                cantidadPreguntas.innerHTML = ''
+                                nombreSeleccionadoJugador = select.value
+                                seleccionarCantidadPreguntas()
+                        })
+                        divPlayer.appendChild(buttonJugar)
+
+                        const btnCacelar = document.createElement("button")
+                        btnCacelar.textContent = "Cancel·la seleccio de nom"
+                        btnCacelar.addEventListener("click", () => {
+                                btnNom.classList.add("oculto")
+                                btnCacelar.classList.add("oculto")
+                                buttonJugar.classList.add("oculto")
+                                select.classList.add("oculto")
+                                selectEliminar.classList.add("oculto")
+                                LABEL.classList.add("oculto")
+                                inputNom.classList.add("oculto")
+                                buttonGuardaNom.classList.add("oculto")
+                                selectEliminar.classList.add("oculto")
+                                buttonEliminar.classList.add("oculto")
+
+                                btnGuardaNom.classList.remove("oculto")
+                                btnNom.classList.remove("oculto")
+                                btnElimina.classList.remove("oculto")
+                        })
+                        divPlayer.appendChild(btnCacelar)
+
                 })
-                divPlayer.appendChild(buttonJugar)
+                divPlayer.appendChild(btnNom)
 
                 // Desplegable para seleccionar un nombre para eliminar
                 selectEliminar.id = "selectEliminarNombre"
-                selectEliminar.appendChild(document.createElement("option")) // Opción vacía
 
-                nombresGuardados.forEach(nombre => {
-                        const option = document.createElement("option")
-                        option.value = nombre
-                        option.textContent = nombre
-                        selectEliminar.appendChild(option)
-                })
-                divPlayer.appendChild(selectEliminar)
+                btnElimina.textContent = 'Elimina nom'
+                btnElimina.addEventListener("click", () => {
+                        btnNom.classList.add("oculto")
+                        select.classList.add("oculto")
+                        LABEL.classList.add("oculto")
+                        buttonGuardaNom.classList.add("oculto")
+                        btnElimina.classList.add("oculto")
+                        btnGuardaNom.classList.add("oculto")
 
-                // Botón para eliminar el nombre seleccionado
-                const buttonEliminar = document.createElement("button")
-                buttonEliminar.textContent = "Eliminar nom"
-                buttonEliminar.addEventListener("click", () => {
-                        const nombreAEliminar = selectEliminar.value
-                        if (nombreAEliminar) {
-                                eliminarNombre(nombreAEliminar) // Eliminar nombre de localStorage
-                                nombresGuardados = nombresGuardados.filter(nombre => nombre !== nombreAEliminar)
-                                // Actualizar visualización del select
-                                actualizarSelectores(select, selectEliminar, nombresGuardados)
-                                // divPlayer.innerHTML = ''
-                                console.log(nombresGuardados.length)
-                                // if(nombresGuardados.length > 0){
-                                //         console.log("se muestran los botones e inputs")
-                                //         mostrarSeleccionNombre(nombresGuardados, link)
-                                // } else {
-                                //         console.log("se dejan de mostrar los botones e inputs")
-                                // }
-                        } else {
-                                Swal.fire({
-                                        icon: "error",
-                                        title: "Oops...",
-                                        text: "Selecciona un nom a eliminar.",
-                                });
-                        }
+                        selectEliminar.classList.remove("oculto")
+                        buttonEliminar.classList.remove("oculto")
+
+                        selectEliminar.appendChild(document.createElement("option")) // Opción vacía
+                        nombresGuardados.forEach(nombre => {
+                                const option = document.createElement("option")
+                                option.value = nombre
+                                option.textContent = nombre
+                                selectEliminar.appendChild(option)
+                        })
+                        divPlayer.appendChild(selectEliminar)
+
+                        // Botón para eliminar el nombre seleccionado
+                        buttonEliminar.textContent = "Elimina"
+                        buttonEliminar.addEventListener("click", () => {
+                                mostrarPaginaIncial()
+                                const nombreAEliminar = selectEliminar.value
+                                if (nombreAEliminar) {
+                                        eliminarNombre(nombreAEliminar) // Eliminar nombre de localStorage
+                                        nombresGuardados = nombresGuardados.filter(nombre => nombre !== nombreAEliminar)
+                                        actualizarSelectores(select, selectEliminar, nombresGuardados)
+                                        console.log(nombresGuardados.length)
+                                } else {
+                                        Swal.fire({
+                                                icon: "error",
+                                                title: "Oops...",
+                                                text: "Selecciona un nom a eliminar.",
+                                        });
+                                }
+                        })
+                        divPlayer.appendChild(buttonEliminar)
+
+                        const btnCacelar = document.createElement("button")
+                        btnCacelar.textContent = "Cancel·la seleccio de nom"
+                        btnCacelar.addEventListener("click", () => {
+                                btnNom.classList.add("oculto")
+                                btnCacelar.classList.add("oculto")
+                                buttonEliminar.classList.add("oculto")
+                                select.classList.add("oculto")
+                                selectEliminar.classList.add("oculto")
+                                LABEL.classList.add("oculto")
+                                inputNom.classList.add("oculto")
+                                buttonGuardaNom.classList.add("oculto")
+
+                                btnGuardaNom.classList.remove("oculto")
+                                btnElimina.classList.remove("oculto")
+                                btnNom.classList.remove("oculto")
+                        })
+                        divPlayer.appendChild(btnCacelar)
+
                 })
-                divPlayer.appendChild(buttonEliminar)
+                divPlayer.appendChild(btnElimina)
+
         } else {
                 const mensaje = document.createElement("p")
                 mensaje.textContent = "No hi ha noms emmagatzemats. Si us plau, introdueix-ne un."
                 divPlayer.appendChild(mensaje)
         }
-
-
         // Crear el formulario para agregar un nuevo nombre
-        const LABEL = document.createElement("label")
-        LABEL.textContent = `Escriu el teu nom de jugador:`
 
-        const INPUT = document.createElement("input")
-        INPUT.type = "text"
-        INPUT.id = "nombre"
-        INPUT.placeholder = 'Màxim 15 caràcters'
+        btnGuardaNom.textContent = 'Guarda nom de jugador'
+        btnGuardaNom.addEventListener("click", () => {
+                btnElimina.classList.add("oculto")
+                btnNom.classList.add("oculto")
+                btnGuardaNom.classList.add("oculto")
+                select.classList.add("oculto")
+                buttonGuardaNom.classList.add("oculto")
 
-        const BUTTON = document.createElement("button")
-        BUTTON.textContent = `Guarda nom`
 
-        BUTTON.addEventListener("click", () => {
-                const nombre = document.getElementById("nombre").value
-                if (nombre) {
-                        if (nombre.length <= 15) {
-                                const nombresGuardados = JSON.parse(localStorage.getItem("nombresUsuarios")) || []
-                                if (!nombresGuardados.includes(nombre)) { // Verificar si el nombre ya está guardado
-                                        nombresGuardados.push(nombre)
-                                        localStorage.setItem("nombresUsuarios", JSON.stringify(nombresGuardados)) // Guardar en localStorage
-                                        INPUT.value = ''
-                                        console.log(`Nombre guardado: ${nombre}`)
-                                        // poner aqui el sweetAlert de que se esta gaurdando
-                                        location.reload() // QUITAR
-                                        // Actualizar visualización del select
-                                        actualizarSelectores(select, selectEliminar, nombresGuardados)
-                                        // mostrarSeleccionNombre(nombresGuardados, link)
+                inputNom.classList.remove("oculto")
+                btnCacelar.classList.remove("oculto")
+                LABEL.classList.remove("oculto")
+                buttonGuardaNom.classList.remove("oculto")
+
+                LABEL.textContent = `Escriu el teu nom de jugador:`
+
+                inputNom.type = "text"
+                inputNom.id = "nombre"
+                inputNom.placeholder = 'Màxim 15 caràcters'
+
+                buttonGuardaNom.textContent = `Guarda nom`
+                buttonGuardaNom.addEventListener("click", () => {
+                        mostrarPaginaIncial()
+                        const nombre = document.getElementById("nombre").value
+                        if (nombre) {
+                                if (nombre.length <= 15) {
+                                        const nombresGuardados = JSON.parse(localStorage.getItem("nombresUsuarios")) || []
+                                        if (!nombresGuardados.includes(nombre)) { // Verificar si el nombre ya está guardado
+                                                nombresGuardados.push(nombre)
+                                                localStorage.setItem("nombresUsuarios", JSON.stringify(nombresGuardados)) // Guardar en localStorage
+                                                inputNom.value = ''
+                                                console.log(`Nombre guardado: ${nombre}`)
+                                                // poner aqui el sweetAlert de que se esta gaurdando
+                                                Swal.fire({
+                                                        title: "S'ha guardat correctament",
+                                                        icon: "success"
+                                                }).then(() => {
+                                                        console.log("deberia de refrescar la pagina");
+                                                        introducirNombreParaJugar()
+                                                })
+                                                // location.reload() // QUITAR
+                                                actualizarSelectores(select, selectEliminar, nombresGuardados)
+                                                // mostrarSeleccionNombre(nombresGuardados, link)
+                                        } else {
+                                                Swal.fire({
+                                                        icon: "error",
+                                                        title: "Oops...",
+                                                        text: "El nom ja està guardat. Prova amb un altre.",
+                                                });
+                                                inputNom.value = ''
+                                        }
                                 } else {
                                         Swal.fire({
                                                 icon: "error",
                                                 title: "Oops...",
-                                                text: "El nom ja està guardat. Prova amb un altre.",
+                                                text: "Nom masa llarg.",
                                         });
-                                        INPUT.value = ''
+                                        inputNom.value = ''
                                 }
                         } else {
                                 Swal.fire({
                                         icon: "error",
                                         title: "Oops...",
-                                        text: "Nom masa llarg.",
+                                        text: "Siusplau, introdueix un nom.",
                                 });
-                                INPUT.value = ''
                         }
-                } else {
-                        Swal.fire({
-                                icon: "error",
-                                title: "Oops...",
-                                text: "Siusplau, introdueix un nom.",
-                        });
-                }
-        })
 
-        divPlayer.appendChild(LABEL)
-        divPlayer.appendChild(INPUT)
-        divPlayer.appendChild(BUTTON)
+                })
+
+                btnCacelar.textContent = "Cancel·la seleccio de nom"
+                btnCacelar.addEventListener("click", () => {
+                        btnCacelar.classList.add("oculto")
+                        LABEL.classList.add("oculto")
+                        inputNom.classList.add("oculto")
+                        buttonGuardaNom.classList.add("oculto")
+
+                        btnElimina.classList.remove("oculto")
+                        btnNom.classList.remove("oculto")
+                        btnGuardaNom.classList.remove("oculto")
+                })
+                divPlayer.appendChild(LABEL)
+                divPlayer.appendChild(inputNom)
+                divPlayer.appendChild(buttonGuardaNom)
+                divPlayer.appendChild(btnCacelar)
+        })
+        divPlayer.appendChild(btnGuardaNom)
 
         PLAYER.appendChild(divPlayer)
 }
@@ -526,8 +638,15 @@ function eliminarNombre(nombre) {
                 }
         }
         // poner aqui el sweetAlert de que se a eliminado correctamente
+        Swal.fire({
+                title: "S'ha eliminat correctament",
+                icon: "success"
+        }).then(() => {
 
-        location.reload() // QUITAR
+                introducirNombreParaJugar()
+        })
+
+        // location.reload() // QUITAR
         localStorage.setItem("nombresUsuarios", JSON.stringify(nuevosNombres));
         console.log(`Nombre eliminado: ${nombre}`)
 }
@@ -571,12 +690,28 @@ function seleccionarCantidadPreguntas() {
                 cantidadPreguntas.classList.add("oculto")
         })
 
+        const btnCacelar = document.createElement("button")
+        btnCacelar.textContent = "Cancel·la selecció quantitat preguntes"
+        btnCacelar.addEventListener("click", () => {
+                mostrarPaginaIncial()
+                alertaSolicitudes("Seleccio de preguntes cancel·lada", () => {
+                        introducirNombreParaJugar()
+                })
+        })
+
         divCantPreg.appendChild(LABELpreguntes)
-        // divCantPreg.appendChild(inputCantPreg)
         divCantPreg.appendChild(selectCantPreg)
         divCantPreg.appendChild(btnCantPreg)
+        divCantPreg.appendChild(btnCacelar)
 
         cantidadPreguntas.appendChild(divCantPreg)
+}
+
+function alertaSolicitudes(titulo, funcion) {
+        Swal.fire({
+                title: titulo,
+                icon: "success"
+        }).then(() => funcion && funcion()) // si recibe la funcion le llama y si no no hace nada
 }
 
 introducirNombreParaJugar()

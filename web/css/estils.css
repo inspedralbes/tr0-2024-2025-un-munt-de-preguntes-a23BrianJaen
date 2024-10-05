@@ -29,7 +29,7 @@ html, body {
 
 /* Visibilidad */
 .oculto {
-    display: none;
+    display: none!important;
 }
 
 .visible {
