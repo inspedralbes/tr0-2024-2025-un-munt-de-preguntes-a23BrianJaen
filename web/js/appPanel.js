@@ -58,7 +58,6 @@ async function cargarPreguntas(data) {
     MOSTRAPREGUNTES.appendChild(titol)
 
     botoInsertar.addEventListener("click", () => {
-        console.log("Inserir pregunta")
         insertarPregunta()
     })
 
@@ -115,9 +114,8 @@ async function cargarPreguntas(data) {
         let idRespEditQuick = []
         let idRespCorrEditQuick = []
 
-        // Añadir las respuestas y las respuestas correctas
         for (const [indexResp, resposta] of (pregunta.respostes || []).entries()) {
-            // Asegurar que 'resposta' es un objeto válido
+            // Asegurar que 'resposta' es un objecte valid
             if (!resposta || typeof resposta !== 'object') {
                 console.error(`Error: 'resposta' no es un objeto válido en la pregunta con id: ${pregunta.idPregunta}`)
                 continue
@@ -128,11 +126,9 @@ async function cargarPreguntas(data) {
             itemResposta.id = `resposta_${index}_${indexResp}`
             idRespEditQuick[indexResp] = itemResposta.id
 
-            // Mostrar el ID de la respuesta en el texto
             itemResposta.textContent += ` ${resposta.idResposta || 'ID no disponible'} 🢘 ID`
             listaRespostes.appendChild(itemResposta)
 
-            // Comprobar si la respuesta es correcta
             const respCorr = resposta.respostaCorrecta == 1 ? "true" : "false"
 
             const respostaCorr = document.createElement("li")
@@ -151,7 +147,7 @@ async function cargarPreguntas(data) {
         filaPregunta.appendChild(celdaRespostes)
         filaPregunta.appendChild(celdaRespostesCorrectes)
 
-        // Celda de acciones
+        // Celda d'accions
         const celdaAccions = document.createElement("td")
 
         const botoEdit = document.createElement("button")
@@ -163,7 +159,7 @@ async function cargarPreguntas(data) {
         })
         celdaAccions.appendChild(botoEdit)
 
-        // Botón Eliminar
+        // Botó Eliminar
         const botoEliminar = document.createElement("button")
         botoEliminar.textContent = "Eliminar"
         botoEliminar.addEventListener("click", async () => {
@@ -181,6 +177,7 @@ async function cargarPreguntas(data) {
             for (const [indexResp, resposta] of pregunta.respostes.entries()) {
                 const thQuickEditResp = document.getElementById(`resposta_${index}_${indexResp}`)
                 const thQuickEditRespCorr = document.getElementById(`respostaCorr_${index}_${indexResp}`)
+
                 if (thQuickEditResp) {
                     idRespEditQuick[indexResp] = thQuickEditResp
                 }
@@ -189,7 +186,6 @@ async function cargarPreguntas(data) {
                 }
             }
 
-            console.log(`Editant la pregunta de manera ràpida: ${pregunta.idPregunta} - ${pregunta.pregunta}`)
             editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, idRespCorrEditQuick, botoQuickEdit, celdaAccions, botoEdit, botoEliminar)
         })
         celdaAccions.appendChild(botoQuickEdit)
@@ -198,7 +194,7 @@ async function cargarPreguntas(data) {
         cos.appendChild(filaPregunta)
     }
 
-    // Añadir el cuerpo de la tabla a la tabla
+    // Afegir el cos de la tabla a la tabla
     tabla.appendChild(cos)
     MOSTRAPREGUNTES.appendChild(tabla)
 
@@ -218,7 +214,6 @@ async function cargarPreguntas(data) {
 
     MOSTRAPREGUNTES.appendChild(divJuego)
 
-    console.log(MOSTRAPREGUNTES)
 }
 
 async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, idRespCorrEditQuick, botoQuickEdit, celdaAccions, botoEdit, botoEliminar) {
@@ -233,50 +228,46 @@ async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, id
     INPUTPREGUNTA.value = pregunta.pregunta
     thQuickEditPreg.appendChild(INPUTPREGUNTA)
 
-    // Arrays para almacenar los inputs de las respuestas y los IDs
+    // Arrays per emmagatzemar els inputs de les respostes i els IDs
     const respuestasInputs = []
     const respuestasIds = []
-    let respuestaCorrectaSeleccionada // Para almacenar la respuesta correcta seleccionada
+    let respuestaCorrectaSeleccionada // Per emmagatzemar les respostes correctes
 
     for (let i = 0; i < pregunta.respostes.length; i++) {
         const thQuickEditResp = idRespEditQuick[i]
         thQuickEditResp.innerHTML = ""
 
-        // Input para el texto de la respuesta
+        // Input per el text de la resposta
         const INPUTRESPOSTES = document.createElement("input")
         INPUTRESPOSTES.type = "text"
         INPUTRESPOSTES.size = pregunta.respostes[i].resposta.length
         INPUTRESPOSTES.value = pregunta.respostes[i].resposta
         thQuickEditResp.appendChild(INPUTRESPOSTES)
 
-        // Guardar inputs de respuestas y sus IDs
+        // Desa inputs de respostes i els seus IDs
         respuestasInputs.push(INPUTRESPOSTES)
         respuestasIds.push(pregunta.respostes[i].idResposta)
 
         const thQuickEditRespCorr = idRespCorrEditQuick[i]
         thQuickEditRespCorr.innerHTML = ""
 
-        // Input tipo radio para seleccionar la respuesta correcta
+        // Input tipus "radio" per seleccionar la resposta correcta
         const INPUTRESPOTESCORRECTES = document.createElement("input")
         INPUTRESPOTESCORRECTES.type = "radio"
         INPUTRESPOTESCORRECTES.name = `respuestaCorrecta_${pregunta.idPregunta}` // Todos los radios de la misma pregunta tienen el mismo name
         INPUTRESPOTESCORRECTES.value = pregunta.respostes[i].idResposta
 
-        // Establecer el radio como seleccionado si es la respuesta correcta
+        // Establir el radio com seleccionat sí és la resposta correcta
         INPUTRESPOTESCORRECTES.checked = pregunta.respostes[i].respostaCorrecta == 1
 
-        // Si el radio está marcado como correcto, actualizar la variable
+        // Si el radio està marcat com a correcta, actualitzo la variable
         if (INPUTRESPOTESCORRECTES.checked) {
             respuestaCorrectaSeleccionada = pregunta.respostes[i].idResposta
-            console.log(respuestaCorrectaSeleccionada);
-
         }
 
-        // Evento que actualiza la respuesta correcta cuando el radio cambia
+        // Event que actualitza la resposta correcta quan el radio canvia
         INPUTRESPOTESCORRECTES.addEventListener('change', () => {
             respuestaCorrectaSeleccionada = pregunta.respostes[i].idResposta
-            console.log(respuestaCorrectaSeleccionada);
-
         })
 
         thQuickEditRespCorr.appendChild(INPUTRESPOTESCORRECTES)
@@ -297,13 +288,11 @@ async function editaPreguntaRapid(pregunta, thQuickEditPreg, idRespEditQuick, id
             datosActualizados[`idResposta${i + 1}`] = respuestasIds[i]
         }
 
-        console.log(datosActualizados);
-
         const jsonData = JSON.stringify(datosActualizados)
 
         await sendDataUpdateQuick(jsonData)
-
         completarSolicitud()
+
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
 
@@ -361,7 +350,7 @@ function editaPregunta(pregunta) {
     const CANTRESP = 4
 
     for (let i = 0; i < CANTRESP; i++) {
-        // Campo de respuesta de texto
+        // Camp de resopsta de text
         const INPUTRESP = document.createElement("input")
         INPUTRESP.type = "text"
         INPUTRESP.placeholder = `Resposta ${i + 1}`
@@ -369,7 +358,7 @@ function editaPregunta(pregunta) {
         INPUTRESP.value = pregunta.respostes[i].resposta
         FORMULARIEditar.appendChild(INPUTRESP)
 
-        // Campo de ID de la respuesta
+        // Camp de ID de la resposta
         const INPUTIDRESP = document.createElement("input")
         INPUTIDRESP.type = "text"
         INPUTIDRESP.name = `idResposta${i + 1}`
@@ -393,7 +382,6 @@ function editaPregunta(pregunta) {
     btnCanelar.type = "button"
     btnCanelar.textContent = 'Cancela'
     btnCanelar.addEventListener("click", async () => {
-        console.log("entra")
         const actualizaData = await getData()
         cargarPreguntas(actualizaData)
         cancelarSolicitud()
@@ -406,15 +394,14 @@ function editaPregunta(pregunta) {
     FORMULARIEditar.addEventListener("submit", async (event) => {
         event.preventDefault()
 
-        const formData = new FormData(FORMULARIEditar)
+        const formData = new FormData(FORMULARIEditar) // Transformo el formulari en un objecte simple
 
         const formObject = {}
-        formData.forEach((valor, clau) => {
+        formData.forEach((valor, clau) => { // Agafo el nom de l'etiqueta i o poso com a clau, el que introdueix l'usuari com a valor
             formObject[clau] = valor
         })
 
         const jsonData = JSON.stringify(formObject)
-        console.log(jsonData)
         await sendDataUpdate(jsonData)
 
         completarSolicitud() 
@@ -427,7 +414,6 @@ function editaPregunta(pregunta) {
 
     divEditar.appendChild(FORMULARI)
     editar.appendChild(divEditar)
-    console.log(editar)
 }
 
 async function eliminarPregunta(idPregunta) {
@@ -507,10 +493,10 @@ async function insertarPregunta() {
     FORMULARIINSRT.addEventListener("submit", async (event) => {
         event.preventDefault()
 
-        const formData = new FormData(FORMULARIINSRT)
+        const formData = new FormData(FORMULARIINSRT) // Transformo el formulari en un objecte simple
 
         const formObject = {}
-        formData.forEach((valor, clau) => {
+        formData.forEach((valor, clau) => { // Agafo el nom de l'etiqueta i o poso com a clau, el que introdueix l'usuari com a valor
             formObject[clau] = valor
         })
 
@@ -528,57 +514,54 @@ async function insertarPregunta() {
 
     divInsertar.appendChild(FORMULARI)
     INSERTAR.appendChild(divInsertar)
-    console.log(INSERTAR)
 }
 
 function cancelarSolicitud() {
-    let timerInterval;
+    let timerInterval
     Swal.fire({
         title: "Cancel·lant sol·licitud...",
         html: "Es tancara <b></b> milliseconds.",
         timer: 2000,
         timerProgressBar: true,
         didOpen: () => {
-            Swal.showLoading();
-            const timer = Swal.getPopup().querySelector("b");
+            Swal.showLoading()
+            const timer = Swal.getPopup().querySelector("b")
             timerInterval = setInterval(() => {
-                timer.textContent = `${Swal.getTimerLeft()}`;
-            }, 100);
+                timer.textContent = `${Swal.getTimerLeft()}`
+            }, 100)
         },
         willClose: () => {
-            clearInterval(timerInterval);
+            clearInterval(timerInterval)
         }
     }).then((result) => {
-        /* Read more about handling dismissals below */
         if (result.dismiss === Swal.DismissReason.timer) {
-            console.log("I was closed by the timer");
+            console.log("I was closed by the timer")
         }
-    });
+    })
 }
 
 function completarSolicitud() {
-    let timerInterval;
+    let timerInterval
     Swal.fire({
         title: "Completant sol·licitud...",
         html: "Es tancara <b></b> milliseconds.",
         timer: 2000,
         timerProgressBar: true,
         didOpen: () => {
-            Swal.showLoading();
-            const timer = Swal.getPopup().querySelector("b");
+            Swal.showLoading()
+            const timer = Swal.getPopup().querySelector("b")
             timerInterval = setInterval(() => {
-                timer.textContent = `${Swal.getTimerLeft()}`;
-            }, 100);
+                timer.textContent = `${Swal.getTimerLeft()}`
+            }, 100)
         },
         willClose: () => {
-            clearInterval(timerInterval);
+            clearInterval(timerInterval)
         }
     }).then((result) => {
-        /* Read more about handling dismissals below */
         if (result.dismiss === Swal.DismissReason.timer) {
-            console.log("I was closed by the timer");
+            console.log("I was closed by the timer")
         }
-    });
+    })
 }
 
 mostrarBBDD()
