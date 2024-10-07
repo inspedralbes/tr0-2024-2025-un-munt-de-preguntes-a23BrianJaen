@@ -4,7 +4,6 @@ Aquesta carpeta ha de contenir l'aplicació, tot el que s'hagi de posar a la car
 Típicament, els següents fitxers organitzats en les carpetes corresponents:
  -  html
  -  php
- -  png,jpg ...
+ -  png,jpg 
  -  js
  -  css
- -  
