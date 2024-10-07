@@ -12,24 +12,58 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #1f1f1f; 
-    color: #f5f5f5; 
 }
 
+/* Estilos por defecto (Modo Oscuro) */
+body.claseOscuro {
+    background-color: #1f1f1f; /* Fondo oscuro */
+    color: #f5f5f5; /* Texto claro */
+}
 
+/* Estilos para el modo claro */
+body.claseClaro {
+    background-color: #ffffff; /* Fondo blanco */
+    color: #1f1f1f; /* Texto oscuro */
+}
 
 /* Contenedor principal de la aplicación */
 #app {
+    position: relative; /* Para que el botón se posicione en relación a este contenedor */
     text-align: center;
-    background-color: #2e2e2e; 
+    background-color: #2e2e2e; /* Fondo contenedor en modo oscuro */
     padding: 2rem;
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Sombra */
+}
+
+/* Estilos específicos para el modo claro */
+body.claseClaro #app {
+    background-color: #f5f5f5; /* Fondo gris claro en modo claro */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra más suave */
+}
+
+/* Botón para alternar modo */
+#toggleMode {
+    position: absolute; /* Posicionamiento absoluto */
+    top: 20px; /* Espaciado desde la parte superior */
+    right: 20px; /* Espaciado desde la derecha */
+    background-color: #6200ea; /* Color de fondo */
+    color: #fff; /* Color del texto */
+    border: none; /* Sin borde */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 10px 20px; /* Espaciado interno */
+    cursor: pointer; /* Cursor de mano */
+    transition: background-color 0.3s ease; /* Transición para el hover */
+}
+
+/* Hover para el botón de alternar modo */
+#toggleMode:hover {
+    background-color: #7e57c2; /* Color de fondo al pasar el cursor */
 }
 
 /* Visibilidad */
 .oculto {
-    display: none!important;
+    display: none !important;
 }
 
 .visible {
@@ -44,18 +78,18 @@ html, body {
 /* Botones de navegación */
 .nav-buttons {
     display: flex;
-    justify-content: center;
-    margin-top: 10px; 
+    justify-content: center; 
+    margin-top: 10px;
 }
 
-.btnDisabled{
-    background-color: #280144; 
+.btnDisabled {
+    background-color: #280144; /* Botón deshabilitado en modo oscuro */
 }
 
 /* Estilos generales para botones */
 button {
     display: inline-block;
-    background-color: #4b0082; 
+    background-color: #4b0082; /* Fondo en modo oscuro */
     color: #fff;
     border: none;
     border-radius: 8px; 
@@ -66,18 +100,31 @@ button {
     transition: background-color 0.3s ease;
 }
 
+/* Estilos específicos para el modo claro */
+body.claseClaro button {
+    background-color: #6200ea; /* Azul más claro en modo claro */
+}
+
 /* Hover para los botones */
 button:hover {
-    background-color: #6a0dad; 
+    background-color: #6a0dad; /* Hover en modo oscuro */
+}
+
+body.claseClaro button:hover {
+    background-color: #7e57c2; /* Hover en modo claro */
 }
 
 button:active {
-    background-color: #370b53; 
+    background-color: #370b53; /* Fondo oscuro al hacer clic en modo oscuro */
+}
+
+body.claseClaro button:active {
+    background-color: #512da8; /* Fondo más oscuro al hacer clic en modo claro */
 }
 
 .button-pulsado {
     display: inline-block;
-    background-color: #1c0c49; 
+    background-color: #1c0c49; /* Fondo en modo oscuro */
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -88,13 +135,25 @@ button:active {
     transition: background-color 0.3s ease;
 }
 
-/* Hover para los botones */
+/* Hover para los botones pulsados */
 .button-pulsado:hover {
-    background-color: #502497;
+    background-color: #502497; /* Hover en modo oscuro */
+}
+
+.body.claseClaro .button-pulsado {
+    background-color: #d32f2f; /* Fondo rojo claro en modo claro */
+}
+
+.body.claseClaro .button-pulsado:hover {
+    background-color: #f44336; /* Hover rojo más claro en modo claro */
 }
 
 .button-pulsado:active {
-    background-color: #001950; 
+    background-color: #490050; /* Rojo más oscuro al hacer clic en modo oscuro */
+}
+
+body.claseClaro .button-pulsado:active {
+    background-color: #c62828; /* Rojo más oscuro al hacer clic en modo claro */
 }
 
 /* Estilos para inputs y selects */
@@ -105,12 +164,20 @@ select {
     margin: 20px auto;
     display: block;
     border-radius: 8px;
-    border: 1px solid #6a0dad;
-    background-color: #3c3c3c; 
-    color: #fff;
+    border: 1px solid #6a0dad; /* Borde en modo oscuro */
+    background-color: #3c3c3c; /* Fondo en modo oscuro */
+    color: #fff; /* Texto claro en modo oscuro */
 }
 
-.selectCantPreg{
+/* Estilos específicos para el modo claro */
+body.claseClaro input[type="text"],
+body.claseClaro select {
+    border: 1px solid #6200ea; /* Borde morado en modo claro */
+    background-color: #e0e0e0; /* Fondo gris claro en modo claro */
+    color: #000; /* Texto oscuro en modo claro */
+}
+
+.selectCantPreg {
     width: auto;
     min-width: max-content;
 }
@@ -125,31 +192,58 @@ p {
 /* Estilos para selects */
 select, 
 option {
-    background-color: #2e2e2e;
-    color: #fff;
+    background-color: #2e2e2e; /* Fondo oscuro para selects */
+    color: #fff; /* Texto claro */
+}
+
+/* Estilos específicos para el modo claro */
+body.claseClaro select, 
+body.claseClaro option {
+    background-color: #f5f5f5; /* Fondo gris claro en modo claro */
+    color: #1f1f1f; /* Texto oscuro en modo claro */
 }
 
 /* Estilos para enlaces */
 a {
-    color: #7900cf; 
+    color: #7900cf; /* Enlaces morados en modo oscuro */
     text-decoration: none; 
     font-size: 1.2rem; 
     transition: color 0.3s ease; 
 }
 
 a:hover {
-    color: #6a0dad; 
+    color: #6a0dad; /* Hover en modo oscuro */
+}
+
+/* Estilos específicos para el modo claro */
+body.claseClaro a {
+    color: #6200ea; /* Enlaces morados en modo claro */
+}
+
+body.claseClaro a:hover {
+    color: #7e57c2; /* Hover en modo claro */
 }
 
 /* Botón para finalizar el cuestionario */
 #enviaRespostes,
 #nouJoc {
-    background-color: #333;
+    background-color: #333; /* Fondo en modo oscuro */
 }
 
 #enviaRespostes:hover,
 #nouJoc:hover {
-    background-color: #555; /* Color al pasar el cursor */
+    background-color: #555; /* Hover en modo oscuro */
+}
+
+/* Estilos específicos para el modo claro */
+body.claseClaro #enviaRespostes,
+body.claseClaro #nouJoc {
+    background-color: #e0e0e0; /* Fondo gris claro en modo claro */
+}
+
+body.claseClaro #enviaRespostes:hover,
+body.claseClaro #nouJoc:hover {
+    background-color: #bdbdbd; /* Hover gris más oscuro en modo claro */
 }
 
 /* Animaciones opcionales para una transición suave */
@@ -158,4 +252,3 @@ input[type="text"],
 select {
     transition: all 0.3s ease;
 }
-

@@ -126,7 +126,7 @@ async function cargarPreguntas(data) {
             itemResposta.id = `resposta_${index}_${indexResp}`
             idRespEditQuick[indexResp] = itemResposta.id
 
-            itemResposta.textContent += ` ${resposta.idResposta || 'ID no disponible'} 🢘 ID`
+            itemResposta.textContent += ` ${resposta.idResposta || 'ID no disponible'} - ID`
             listaRespostes.appendChild(itemResposta)
 
             const respCorr = resposta.respostaCorrecta == 1 ? "true" : "false"

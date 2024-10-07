@@ -622,7 +622,7 @@ function seleccionarCantidadPreguntas() {
 
         // Escollir la quantitat de preguntes d'acord amb el nivell de dificultat
         const selectCantPreg = document.createElement("select")
-        selectCantPreg.id = "slecetCantPreg"
+        selectCantPreg.id = "selecetCantPreg"
         selectCantPreg.classList.add("selectCantPreg")
 
         const option1 = document.createElement("option")
@@ -643,7 +643,7 @@ function seleccionarCantidadPreguntas() {
         const btnCantPreg = document.createElement("button")
         btnCantPreg.textContent = "Selecciona quantiat y jugar"
         btnCantPreg.addEventListener("click", () => {
-                const cantitaPreguntes = document.getElementById("slecetCantPreg").value
+                const cantitaPreguntes = document.getElementById("selecetCantPreg").value
                 localStorage.setItem("cantPreg", cantitaPreguntes)
                 iniciarJuego(nombreSeleccionadoJugador)
                 cantidadPreguntas.classList.add("oculto")
@@ -679,5 +679,48 @@ function alertaSolicitudesCanceladas(titulo, funcion) {
                 icon: "error"
         }).then(() => funcion && funcion()) // Si hi ha una funció passada com a argument (verifiquem si és veritable amb 'funció &&'), s'executa
 }
+
+
+// Función para alternar entre mostrar y ocultar la hoja de estilos
+function alternarModo() {
+
+        if (document.body.classList.contains('claseOscuro')) {
+                // Si el modo oscuro está oculto, lo mostramos y ocultamos el modo claro
+
+                document.body.classList.add('claseClaro')
+                document.body.classList.remove('claseOscuro')
+
+        } else {
+                // Si el modo oscuro está activo, lo ocultamos y mostramos el claro
+
+                document.body.classList.remove('claseClaro')
+                document.body.classList.add('claseOscuro')
+        }
+}
+
+// Función para crear el botón de alternancia
+function crearBotonAlternar(divId) {
+
+        if (divId) {
+                const boton = document.createElement('button')
+                boton.textContent = "Mode color"
+                boton.id = "toggleMode"
+                boton.addEventListener('click', () => {
+                        alternarModo()
+                })
+                divId.appendChild(boton)
+        }
+}
+
+
+// Inicializar la funcionalidad de alternancia de modo
+document.addEventListener('DOMContentLoaded', () => {
+        const divModoColor = document.getElementById("modoColor")
+        crearBotonAlternar(divModoColor)
+})
+
+
+
+
 
 introducirNombreParaJugar()
